@@ -1,0 +1,79 @@
+#!/bin/bash
+# 
+# uwsgi 	loads uwsgi
+#
+# chkconfig: - 50 50
+# description: uwsgi
+#
+### BEGIN INIT INFO
+# Provides:          uwsgi
+# Short-Description: Initializes uwsgi
+# Description:       Initializes network console logging of kernel messages.
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:$PATH
+RETVAL=0
+
+# Source function library.
+# . /etc/rc.d/init.d/functions
+
+usage ()
+{
+	echo $"Usage: $0 {start|stop|status|restart|condrestart}" 1>&2
+	RETVAL=2
+}
+
+start ()
+{
+	echo "starting up uwsgi..."
+#	$HOME/anaconda3/envs/xskew/bin/uwsgi --emperor $HOME/anaconda3/envs/xskew/etc/uwsgi/vassals --safe-pidfile $HOME/var/run/uwsgi.pid  --uid $USER --gid $USER --daemonize $HOME/anaconda3/envs/xskew/var/log/uwsgi-emperor.log &
+	$HOME/anaconda3/envs/xskew/bin/uwsgi --emperor $HOME/anaconda3/envs/xskew/etc/uwsgi/vassals --uid $USER --gid $USER --daemonize $HOME/anaconda3/envs/xskew/var/log/uwsgi-emperor.log &
+
+	sleep 3
+	PID=`ps aux | grep uwsgi | grep "uwsgi --emperor" | grep -v grep | awk '{ print $2}'`
+	echo $PID > $HOME/var/run/uwsgi.pid
+	touch $HOME/var/lock/subsys/uwsgi
+}
+
+stop ()
+{
+	PID=`cat $HOME/var/run/uwsgi.pid`
+	echo "shutting down pid: $PID"
+	$HOME/anaconda3/envs/xskew/bin/uwsgi --stop $HOME/var/run/uwsgi.pid
+	rm -f $HOME/var/run/uwsgi.pid
+	rm -f $HOME/var/lock/subsys/uwsgi
+}
+
+status ()
+{
+	if /sbin/lsmod | grep netconsole >/dev/null 2>&1 ; then
+		echo $"netconsole module loaded"
+		RETVAL=0
+	else
+		echo $"netconsole module not loaded"
+		RETVAL=3
+	fi
+}
+
+
+restart ()
+{
+	stop
+	start
+}
+
+condrestart ()
+{
+	[ -e $HOME/var/lock/subsys/uwsgi ] && restart
+}
+
+
+case "$1" in
+    stop) stop ;;
+    status) status ;;
+    start) start ;;
+    condrestart) condrestart ;;
+    *) usage ;;
+esac
+
+exit $RETVAL

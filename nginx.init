@@ -1,0 +1,77 @@
+#!/bin/bash
+# 
+# nginx 	loads nginx
+#
+# chkconfig: - 50 50
+# description: nginx
+#
+### BEGIN INIT INFO
+# Provides:          nginx
+# Short-Description: Initializes nginx
+# Description:       Initializes network console logging of kernel messages.
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:$PATH
+RETVAL=0
+
+# Source function library.
+# . /etc/rc.d/init.d/functions
+
+usage ()
+{
+	echo $"Usage: $0 {start|stop|status|restart|condrestart}" 1>&2
+	RETVAL=2
+}
+
+start ()
+{
+	echo "starting up nginx..."
+	$HOME/anaconda3/envs/xskew/bin/nginx &
+	sleep 3
+	PID=`ps aux | grep nginx | grep "nginx: master process" | grep -v grep | awk '{ print $2}'`
+	echo $PID > $HOME/var/run/nginx.pid
+	touch $HOME/var/lock/subsys/nginx
+}
+
+stop ()
+{
+	PID=`cat $HOME/var/run/nginx.pid`
+	echo "shutting down pid: $PID"
+	$HOME/anaconda3/envs/xskew/bin/nginx -s stop
+	rm -f $HOME/var/run/nginx.pid
+	rm -f $HOME/var/lock/subsys/nginx
+}
+
+status ()
+{
+	if /sbin/lsmod | grep netconsole >/dev/null 2>&1 ; then
+		echo $"netconsole module loaded"
+		RETVAL=0
+	else
+		echo $"netconsole module not loaded"
+		RETVAL=3
+	fi
+}
+
+
+restart ()
+{
+	stop
+	start
+}
+
+condrestart ()
+{
+	[ -e $HOME/var/lock/subsys/nginx ] && restart
+}
+
+
+case "$1" in
+    stop) stop ;;
+    status) status ;;
+    start) start ;;
+    condrestart) condrestart ;;
+    *) usage ;;
+esac
+
+exit $RETVAL

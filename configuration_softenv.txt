@@ -1,0 +1,40 @@
+# django nginix setup on laptop/rugen15/gillisweb
+# user install
+
+wget https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh
+sh ./Anaconda3-2020.11-Linux-x86_64.sh
+ # -> /home/hover/anaconda3
+ 
+conda create -n xskew python=3.8
+conda activate xskew
+conda install -c conda-forge uwsgi django nginx
+
+# following https://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html
+# add 'rugen15.cshl.edu''localhost'  '127.0.0.1' to ALLOWED_HOSTS in settings.py
+
+# uwsgi --http :8000 --module mysite.wsgi   WORKS
+# browse to http://rugen15.cshl.edu:8000/
+
+DEV setup
+
+~/anaconda3/envs/xskew/etc/nginx/sites.d/xskew_nginix.conf -> 
+	~/git/cshlwork/project/xskew/xskew_nginx.conf
+
+~/sites/xskew/static
+			 /nginx.init -> ~/git/cshlwork/project/xskew/nginx.init
+			 /xskew -> ~/git/cshlwork/project/xskew/xskew
+
+copy image to skew/media/
+http://localhost:8000/media/xskew.png
+
+Start nginx. nginix.init start (any dir)
+Start uwsgi (from xskew django project dir) 
+  uwsgi --socket xskew.sock --wsgi-file xskew/test.py
+
+Test:  http://localhost:8000/ -> Hello World
+ 
+
+
+
+
+   
