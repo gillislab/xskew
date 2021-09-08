@@ -1,0 +1,264 @@
+# To submit on Elzar:
+#  snakemake --jobs 20 --cluster "qsub 
+#									-N werner1 
+#									-pe threads {threads}
+# 									-wd ~/project/werner1.1 
+#									-l m_mem_free={resources.mem_mb}M 
+import os
+
+homedir = os.path.expanduser("~/")
+print(homedir)
+wdir = homedir + "work/werner1"
+chr="X"
+snpdb=f"{homedir}/data/snpdb/chr{chr}.snpdb.txt"
+
+
+
+(SAMPLE,) = glob_wildcards(homedir + "data/GTEx/v8/jon_bams/{sample}.Aligned.sortedByCoord.out.patched.md.bam")
+#SAMPLE = ['GTEX-1HFI7-1126-SM-A96S5','GTEX-1HFI7-1926-SM-A96TQ','GTEX-1GN1W-0526-SM-9MQJQ' ]
+#SAMPLE = ['GTEX-11DXX-2326-SM-9YFKS']
+
+
+rule all:
+	input:
+		# from STAR
+	    log = expand(wdir + "/{sample}.Log.out", sample=SAMPLE ),		
+		flog= expand(wdir + "/{sample}.Log.final.out", sample=SAMPLE),
+		rpg=  expand(wdir + "/{sample}.ReadsPerGene.out.tab",	sample=SAMPLE),
+	   
+		# from gatk
+		sfbam = expand(wdir + "/{sample}." + chr + ".split.filtered.bam",  sample=SAMPLE ),
+		sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
+   		sftab = expand(wdir + "/{sample}." + chr + ".snps_filtered.tab", sample=SAMPLE ),
+		xfvcf = expand(wdir + "/{sample}." + chr + ".filtered.vcf",  sample=SAMPLE ),
+	    
+	    # from igvtools
+	    wig =   expand(wdir + "/{sample}." + chr + ".split.filtered.wig", sample=SAMPLE ),
+		intwig= expand(wdir + "/{sample}." + chr + ".intersect.wig",sample=SAMPLE),
+		cut= 	expand(wdir + "/{sample}." + chr + ".cut", sample=SAMPLE),
+
+rule samtools5out:
+	input:
+		xbam= 	  expand(wdir + "/{sample}."+ chr +".bam", sample=SAMPLE),	
+		xfiltbam= expand(wdir + "/{sample}."+ chr +".filt.bam"	, sample=SAMPLE)
+
+rule gatk6out:
+	input:
+		sfbam = expand(wdir + "/{sample}." + chr + ".split.filtered.bam", sample=SAMPLE),
+		sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf", sample=SAMPLE),
+		sftab = expand(wdir + "/{sample}." + chr + ".snps_filtered.tab", sample=SAMPLE),
+		xfvcf = expand(wdir + "/{sample}." + chr + ".filtered.vcf", sample=SAMPLE)   
+
+
+	    
+rule samtools1: 		
+	input: homedir + "data/GTEx/v8/jon_bams/{sample}.Aligned.sortedByCoord.out.patched.md.bam"
+	output:  wdir + "/{sample}.readSorted.bam"	
+	resources:
+		mem_mb=4096
+	threads: 8
+	shell:
+		" d1=`date +%s` && echo $JOB_NAME $JOB_ID {rule} start $d1  && set -x && "
+		" samtools sort -m {resources.mem_mb}M -o {output} -O bam -n -@ {threads} {input} && "
+		" d2=`date +%s` && echo $JOB_NAME $JOB_ID {rule} end $d2 && "
+		" let rt=$d2-$d1 && echo $JOB_NAME $JOB_ID {rule} runtime $rt "
+	
+rule bedtools2:
+	input:  wdir + "/{sample}.readSorted.bam"
+	output:
+		end1=wdir + "/{sample}.end1.fq",
+		end2=wdir + "/{sample}.end2.fq"
+	resources:
+		mem_mb=2048
+	threads: 1
+	shell:
+		" d1=`date +%s` && echo $JOB_NAME $JOB_ID {rule} start $d1  && set -x && "
+		" bedtools bamtofastq -i {input} -fq {output.end1} -fq2 {output.end2} && "
+		" d2=`date +%s` && echo $JOB_NAME $JOB_ID {rule} end $d2 && "	
+		" let rt=$d2-$d1 && echo $JOB_NAME $JOB_ID {rule} runtime $rt "
+	
+rule star3:
+	input:
+		end1= wdir + "/{sample}.end1.fq",	
+		end2= wdir + "/{sample}.end2.fq",
+	
+	output: 	
+		abam= wdir + "/{sample}.Aligned.out.bam",
+		rpg= wdir + "/{sample}.ReadsPerGene.out.tab",
+		sjtab= wdir + "/{sample}.SJ.out.tab",
+		log= wdir + "/{sample}.Log.out",		
+		plog= wdir + "/{sample}.Log.progress.out",
+		flog= wdir + "/{sample}.Log.final.out",
+
+			
+	params:		
+		tmpdir = "{sample}_starout",
+		wdir = wdir + "/",
+		gdir= homedir + "data/genomes/GRCh38_Gencode25/",
+	
+	resources:
+		mem_mb=3072
+	threads: 16
+	shell:
+		" d1=`date +%s` && echo $JOB_NAME $JOB_ID {rule} start $d1 && set -x && "
+		" cd {params.wdir} && rm -rf {params.tmpdir} && mkdir {params.tmpdir} && cd {params.tmpdir} && "
+		" STAR  --genomeDir {params.gdir} --readFilesIn {input.end1} {input.end2} "
+		" --runThreadN {threads} --twopassMode Basic --twopass1readsN -1 " 
+		" --outSAMtype BAM Unsorted --quantMode GeneCounts && "
+		" mv -v Aligned.out.bam {output.abam} &&  "
+		" mv -v ReadsPerGene.out.tab {output.rpg} && "
+		" mv -v SJ.out.tab {output.sjtab} && "
+		" mv -v Log.out {output.log} && "
+		" mv -v Log.progress.out {output.plog} && "
+		" mv -v Log.final.out {output.flog} && "
+		
+		" cd .. && rm -rf {params.tmpdir} && "
+		" d2=`date +%s` && echo $JOB_NAME $JOB_ID {rule} end $d2 && "
+		" let rt=$d2-$d1 && echo $JOB_NAME $JOB_ID {rule} runtime $rt "
+
+rule samtools4: 
+	input: 		wdir + "/{sample}.Aligned.out.bam"	
+	output:	    wdir + "/{sample}.Aligned.sortedByCoord.out.bam"
+	resources:
+		mem_mb=3072
+	threads: 20
+	shell:
+		" d1=`date +%s` && echo $JOB_NAME $JOB_ID {rule} start $d1  && set -x && "
+		" samtools sort -m {resources.mem_mb}M -o {output} -O bam -@ {threads} {input} && "
+		" samtools index {output} && "
+		" d2=`date +%s` && echo $JOB_NAME $JOB_ID {rule} end $d2 && "
+		" let rt=$d2-$d1 && echo $JOB_NAME $JOB_ID {rule} runtime $rt "
+
+rule samtools5:
+	input:
+		bam= wdir + "/{sample}.Aligned.sortedByCoord.out.bam"	
+	output:
+		xbam= wdir + "/{sample}."+ chr +".bam",	
+		xfiltbam= wdir + "/{sample}."+ chr +".filt.bam"	
+
+	params:
+		tmpdir = "{sample}_tmpdir",
+		chrom = chr,
+		wdir = wdir + "/",
+		gdir=homedir + "data/genomes/GRCh38_Gencode25",
+	resources:
+		mem_mb=3072
+	threads: 1
+	shell:
+		" d1=`date +%s` && echo $JOB_NAME $JOB_ID {rule} start $d1  && set -x && "
+		" cd {params.wdir} && rm -rf {params.tmpdir} && mkdir {params.tmpdir} && cd {params.tmpdir} && "
+		" samtools view -b {input.bam} chr{params.chrom} > {params.chrom}.bam && "
+		" samtools view -b -q 10 {params.chrom}.bam > {params.chrom}.filt.bam && "
+		" mv -v {params.chrom}.bam {output.xbam} && "
+		" mv -v {params.chrom}.filt.bam {output.xfiltbam} && "
+		" cd .. && rm -rf {params.tmpdir} && "
+		" d2=`date +%s` && echo $JOB_NAME $JOB_ID {rule} end $d2 && "
+		" let rt=$d2-$d1 && echo $JOB_NAME $JOB_ID {rule} runtime $rt "
+		
+rule gatk6:		
+	input:
+		xbam= wdir + "/{sample}."+ chr +".bam",	
+		xfiltbam= wdir + "/{sample}."+ chr +".filt.bam",
+
+	output:
+		sfbam = wdir + "/{sample}." + chr + ".split.filtered.bam",
+		sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
+		sftab = wdir + "/{sample}." + chr + ".snps_filtered.tab",
+		xfvcf = wdir + "/{sample}." + chr + ".filtered.vcf",
+		
+	params:
+		tmpdir = "{sample}_tmpdir",
+		chrom = chr,
+		wdir = wdir + "/",
+		gdir = homedir + "data/genomes/GRCh38_Gencode25",
+	
+	resources:
+		#mem_mb=46080
+		mem_mb= 5760
+	#threads: 1
+	threads: 8
+	
+	shell:
+		" d1=`date +%s` && echo $JOB_NAME $JOB_ID {rule} start $d1  && set -x && "
+		" cd {params.wdir} && rm -rf {params.tmpdir} && mkdir {params.tmpdir} && cd {params.tmpdir} && "
+		
+		" gatk AddOrReplaceReadGroups -I={input.xfiltbam} -O={params.chrom}.rg.bam -SO=coordinate "
+		"-RGID=id -RGLB=library -RGPL=platform -RGPU=machine -RGSM=sample && "
+		
+		" gatk MarkDuplicates -I={params.chrom}.rg.bam -O={params.chrom}.dedupped.bam -CREATE_INDEX=true " 
+		" -VALIDATION_STRINGENCY=SILENT -M=output.metrics && "
+		
+		" gatk SplitNCigarReads -R {params.gdir}/GRCh38.p7.genome.fa -I {params.chrom}.dedupped.bam " 
+		" -O {params.chrom}.split.filtered.bam --java-options '-XXgcThreads:2 -XX:ConcGCThreads ' && "
+		
+		" gatk HaplotypeCaller -R {params.gdir}/GRCh38.p7.genome.fa -L chr{params.chrom} " 
+		" -I {params.chrom}.split.filtered.bam --dont-use-soft-clipped-bases -stand-call-conf 0.0 "
+		" -O {params.chrom}.filtered.vcf && "
+		
+		" gatk SelectVariants -R {params.gdir}/GRCh38.p7.genome.fa -L chr{params.chrom} "
+        "-V {params.chrom}.filtered.vcf -O {params.chrom}.snps.vcf -select-type SNP &&"
+		
+		" gatk VariantFiltration -R {params.gdir}/GRCh38.p7.genome.fa -L chr{params.chrom} "
+        " -V {params.chrom}.snps.vcf -O {params.chrom}.snps_filtered.vcf "
+        ' -filter "QD < 2.0" --filter-name "QD2" '
+        ' -filter "QUAL < 30.0" --filter-name "QUAL30" '
+        ' -filter "SOR > 3.0" --filter-name "SOR3" '
+        ' -filter "FS > 60.0" --filter-name "FS60" '
+        ' -filter "MQ < 40.0" --filter-name "MQ40" '
+        ' -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" '
+        ' -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" && '
+
+		" gatk VariantsToTable "
+		" -V {params.chrom}.snps_filtered.vcf -O {params.chrom}.snps_filtered.tab "
+  		"-F CHROM -F POS -F REF -F ALT -F QUAL -F FILTER -F FS -F MQ -F MQRankSum -F " 
+  		"QD -F ReadPosRankSum -F SOR -GF GT -GF AD -GF DP -GF GQ -GF PL "
+  		" --show-filtered true && "
+
+		" mv -v {params.chrom}.split.filtered.bam {output.sfbam} && "	
+		" mv -v {params.chrom}.snps_filtered.vcf {output.sfvcf} && "
+		" mv -v {params.chrom}.snps_filtered.tab {output.sftab} && "
+		" mv -v {params.chrom}.filtered.vcf {output.xfvcf} && "
+		" cd .. && rm -rf {params.tmpdir} && "
+		" d2=`date +%s` && echo $JOB_NAME $JOB_ID {rule} end $d2 && "
+		" let rt=$d2-$d1 && echo $JOB_NAME $JOB_ID {rule} runtime $rt "
+
+
+rule igvtools7:	
+	input:
+		snpdb= homedir + "data/snpdb/chr"+ chr +".snpdb.txt", 
+		sfbam= wdir + "/{sample}." + chr + ".split.filtered.bam",
+		sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
+		xfvcf = wdir + "/{sample}." + chr + ".filtered.vcf",
+
+	output:
+	    splitwig= wdir + "/{sample}." + chr + ".split.filtered.wig", 
+		intwig= wdir + "/{sample}." + chr + ".intersect.wig",
+		cut= wdir + "/{sample}." + chr + ".cut"	
+		
+	resources:
+		mem_mb=12288
+	threads: 1
+	
+	params:
+		tmpdir = "{sample}_tmpdir",
+		gdir= homedir + "data/genomes/GRCh38_Gencode25", 
+		wdir = wdir + "/",
+		chrom=chr,
+	
+	shell:
+		" d1=`date +%s` && echo $JOB_NAME $JOB_ID {rule} start $d1  && set -x && "
+		" cd {params.wdir} && rm -rf {params.tmpdir} && mkdir {params.tmpdir} && cd {params.tmpdir} && "		
+		" igvtools count -z 0 -w 1 --bases --strands read {input.sfbam} " 
+		" tmp.{wildcards.sample}.wig {params.gdir}/chr{params.chrom}.fa && "
+		" grep {params.chrom} {input.xfvcf} | cut -f2-5 > A && "
+		" cut -f1 A > B && "
+		" grep -Fw -f B {input.snpdb}  > D && "
+		" grep -Fw -f D tmp.{wildcards.sample}.wig > {params.chrom}.intersect.wig && "
+		" grep -Fw -f D A > {params.chrom}.cut && "		
+		" mv -v tmp.{wildcards.sample}.wig {output.splitwig}  && "
+		" mv -v {params.chrom}.intersect.wig {output.intwig} && "
+		" mv -v {params.chrom}.cut {output.cut} && "
+		" cd .. && rm -rf {params.tmpdir} && "
+		" d2=`date +%s` && echo $JOB_NAME $JOB_ID {rule} end $d2 && "
+		" let rt=$d2-$d1 && echo $JOB_NAME $JOB_ID {rule} runtime $rt "		
+		

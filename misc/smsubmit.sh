@@ -1,0 +1,1 @@
+snakemake --dry-run --jobs 4 --cluster "qsub -N gofocus -pe threads {threads} -l m_mem_free={resources.mem_mb}M "
