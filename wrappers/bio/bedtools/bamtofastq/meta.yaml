@@ -1,0 +1,4 @@
+name: "bedtools bamtofastq"
+description: Convert BAM records to FASTQ records with bedtools.
+authors:
+  - John Hover
