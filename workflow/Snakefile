@@ -9,8 +9,8 @@ homedir = os.path.expanduser("~/")
 wdir = homedir + "work/xskew1"
 chr="X"
 snpdb=f"{homedir}/data/snpdb/chr{chr}.snpdb.txt"
-BEDWRAPPER = "file://" + homedir + "git/xskew/wrappers/bio/bedtools/bamtofastq"
-STARLONGWRAPPER = "file://" + homedir + "git/xskew/wrappers/bio/starlong/align"
+BEDWRAPPER = "file://" + homedir + "git/snakemake-wrappers/bio/bedtools/bamtofastq"
+STARLONGWRAPPER = "file://" + homedir + "git/snakemake-wrappers/bio/starlong/align"
 
 (SAMPLE,) = glob_wildcards(homedir + "data/GTEx/v8/jon_bams/{sample}.Aligned.sortedByCoord.out.patched.md.bam")
 
@@ -66,7 +66,7 @@ rule star3:
 	params:		
 		#tmpdir = "{sample}_starout",
 		#wdir = wdir + "/",
-		extra = "",
+		extra = " ",
 		index = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/"
 	
 	resources:
