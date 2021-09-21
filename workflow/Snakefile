@@ -69,9 +69,13 @@ rule star3:
 		extra = " ",
 		index = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/"
 	
+	#resources:
+	#	mem_mb=3072
+	#threads: 16	
 	resources:
-		mem_mb=3072
-	threads: 16	
+		mem_mb=1024
+	threads: 6
+
 	
 	log:
 		"{sample}.star3.log"
