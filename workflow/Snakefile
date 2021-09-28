@@ -54,10 +54,10 @@ rule bedtools2:
 	
 rule star3:
 	input:   
-		fq1 = "{sample}.end1.fq"	
+		fq1 = wdir + "/{sample}.end1.fq"	
 	
 	output: 	
-		"{sample}.Aligned.out.bam"
+		abam = wdir + "{sample}.Aligned.out.bam"
 		#abam  = wdir + "/{sample}.Aligned.out.bam",
 		#rpg   = wdir + "/{sample}.ReadsPerGene.out.tab",
 		#sjtab = wdir + "/{sample}.SJ.out.tab",
@@ -67,7 +67,7 @@ rule star3:
 			
 	params:		
 		#tmpdir = "{sample}_starout",
-		#wdir = wdir + "/",
+		outprefix = wdir + "{sample}",
 		extra = " ",
 		index = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/"
 	
