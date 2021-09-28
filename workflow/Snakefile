@@ -13,6 +13,8 @@ BEDWRAPPER = "file://" + homedir + "git/snakemake-wrappers/bio/bedtools/bamtofas
 STARLONGWRAPPER = "file://" + homedir + "git/snakemake-wrappers/bio/starlong/align"
 
 (SAMPLE,) = glob_wildcards(homedir + "data/GTEx/v8/jon_bams/{sample}.Aligned.sortedByCoord.out.patched.md.bam")
+#SAMPLE = ['SRR835999','SRR836000','SRR2071349' ]
+SAMPLE = ['GTEX-1CAV2-1426-SM-7MGX6']
 
 print(SAMPLE)
 print(BEDWRAPPER)
