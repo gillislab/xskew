@@ -80,7 +80,7 @@ rule star3:
 
 	
 	log:
-		"{sample}.star3.log"
+		wdir + "{sample}.star3.log"
 
 	wrapper:
 		STARLONGWRAPPER	
