@@ -1,5 +1,6 @@
 import datetime as dt
 import logging
+import shutil
 import subprocess
 import sys
 
@@ -89,4 +90,6 @@ def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
             except NonZeroReturnException as nzre:
                 logging.error(f'problem with {infile}')
                 logging.error(traceback.format_exc(None))
-    
+            finally:
+                shutil.rmtree(f'{outprefix}._STARgenome')
+                shutil.rmtree(f'{outprefix}._STARpass1')    
