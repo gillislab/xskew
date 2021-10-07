@@ -187,7 +187,7 @@ rule star_wasp:
         wplog= wdir + "/{sample}.Log.progress.wasp.out",
         wflog= wdir + "/{sample}.Log.final.wasp.out",
     params:        
-        tmpdir = wdir = "/{sample}_starout",
+        tmpdir = wdir + "/{sample}_starout",
         wdir = wdir + "/",
         gdir= homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/",
         outprefix = wdir + "/{sample}."
