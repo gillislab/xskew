@@ -227,7 +227,7 @@ def gatk_sv(infile, outfile, genome, interval):
     cmd = [ 'gatk', 
             'SelectVariants',
             '-R', genome,
-            '-I', infile, 
+            '-V', infile, 
             '-O', outfile, 
             '-select-type', 'SNP'
             ]
