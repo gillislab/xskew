@@ -33,8 +33,12 @@ rule all:
         end2 = expand(wdir +  "/{sample}_2.fastq", sample=SAMPLE ),
         
         # from STAR
-        abam= expand(wdir + "/{sample}.Aligned.out.bam", sample=SAMPLE ),
+        abam = expand(wdir + "/{sample}.Aligned.out.bam", sample=SAMPLE ),
         
+        # from SAMTOOLS 
+        sbam = expand(wdir + "/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLE ),
+        xbam = expand(wdir + "/{sample}.X.bam", sample=SAMPLE ),
+        xfiltbam = expand(wdir + "/{sample}.X.filt.bam", sample=SAMPLE ),
         
         # from STAR
         #log = expand(wdir + "/{sample}.Log.wasp.out", sample=SAMPLE ),        
@@ -42,6 +46,9 @@ rule all:
         #rpg=  expand(wdir +"/{sample}.ReadsPerGene.out.wasp.tab",    sample=SAMPLE)        
 
         # from gatk
+        rgbam = expand(wdir + "/{sample}." + chr + ".rg.bam", sample=SAMPLE),
+        sfbam = expand(wdir + "/{sample}." + chr + ".split.filtered.bam", sample=SAMPLE),
+        xfvcf = expand(wdir + "/{sample}." + chr + ".filtered.vcf", sample=SAMPLE),
         #sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
         
         # from igvtools
@@ -96,3 +103,92 @@ rule star_nowasp:
                      outtemp= params.tmpdir,  
                      nthreads=f"{threads}", 
                      genomedir=params.gdir)
+
+rule samtools1: 
+    input:
+        abam = wdir + "/{sample}.Aligned.out.bam"    
+    output:
+        sbam = wdir + "/{sample}.Aligned.sortedByCoord.out.bam",
+        sbai = wdir + "/{sample}.Aligned.sortedByCoord.out.bam.bai"
+    resources:
+        mem_mb=3072
+    threads: 20
+    
+    run:
+        samtools_sort(infile=input.abam, 
+                      outfile=output.sbam, 
+                      memory=resources.mem_mb, 
+                      nthreads=f"{threads}")
+        samtools_index(infile=output.sbam, 
+                       nthreads=f"{threads}")
+
+
+rule samtools2:
+    input:
+        bam= wdir + "/{sample}.Aligned.sortedByCoord.out.bam",
+        sbai = wdir + "/{sample}.Aligned.sortedByCoord.out.bam.bai"    
+
+    output:
+        xbam= wdir + "/{sample}."+ chr +".bam",    
+        xfiltbam= wdir + "/{sample}."+ chr +".filt.bam"    
+
+    params:
+        region=f"chr{chr}",
+        qual = 10,
+        
+    resources:
+        mem_mb=3072
+    
+    threads: 1        
+
+    run:
+        samtools_view_region(infile=input.bam, 
+                             outfile=output.xbam, 
+                             region=params.region)
+        samtools_view_quality(infile=output.xbam, 
+                              outfile=output.xfiltbam, 
+                              quality=f'{params.qual}')
+
+
+rule gatk1:        
+    input:
+        xbam= wdir + "/{sample}."+ chr +".bam",    
+        xfiltbam= wdir + "/{sample}."+ chr +".filt.bam",
+
+    output:
+        sfbam = wdir + "/{sample}." + chr + ".split.filtered.bam",
+        #sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
+        xfvcf = wdir + "/{sample}." + chr + ".filtered.vcf",
+        rgbam = wdir + "/{sample}." + chr + ".rg.bam",
+        ddbam = wdir + "/{sample}." + chr + ".dedupped.bam",
+        metrics = wdir + "/{sample}." + chr + ".output.metrics",
+        
+    params:
+        tmpdir = "{sample}_tmpdir",
+        chrom = chr,
+        wdir = wdir + "/",
+        genome = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/GRCh38.p7.genome.fa",
+        interval = f"chr{chr}"
+    
+    resources:
+        #mem_mb=46080
+        mem_mb= 5760
+    #threads: 1
+    threads: 8
+    
+    run:
+        gatk_arrg( infile=input.xfiltbam, outfile=output.rgbam)
+        gatk_md( infile=output.rgbam, outfile=output.ddbam, metrics=output.metrics)
+        gatk_sncr( infile=output.ddbam, outfile=output.sfbam, genome=params.genome )
+        gatk_htc( infile=output.sfbam, outfile=output.xfvcf, genome=params.genome, interval=params.interval)
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        
