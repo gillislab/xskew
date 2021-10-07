@@ -43,7 +43,7 @@ rule all:
         # from STAR
         wlog = expand(wdir + "/{sample}.Log.wasp.out", sample=SAMPLE ),        
         wflog= expand(wdir +"/{sample}.Log.final.wasp.out", sample=SAMPLE),
-        wrpg=  expand(wdir +"/{sample}.ReadsPerGene.out.wasp.tab",    sample=SAMPLE)        
+        wrpg=  expand(wdir +"/{sample}.ReadsPerGene.out.wasp.tab",    sample=SAMPLE),        
 
         # from gatk
         rgbam = expand(wdir + "/{sample}." + chr + ".rg.bam", sample=SAMPLE),
