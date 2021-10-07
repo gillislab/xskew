@@ -251,7 +251,7 @@ def gatk_vf(infile, outfile, genome, interval):
     cmd = [ 'gatk', 
            'VariantFiltration',
             '-R', genome,
-            '-I', infile, 
+            '-V', infile, 
             '-O', outfile,            
             '-filter', '"QD < 2.0"', '--filter-name', '"QD2"', 
             '-filter', '"QUAL < 30.0"', '--filter-name', '"QUAL30"',
