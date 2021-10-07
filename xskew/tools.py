@@ -91,5 +91,5 @@ def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
                 logging.error(f'problem with {infile}')
                 logging.error(traceback.format_exc(None))
             finally:
-                shutil.rmtree(f'{outprefix}._STARgenome')
-                shutil.rmtree(f'{outprefix}._STARpass1')    
+                shutil.rmtree(f'{outprefix}_STARgenome')
+                shutil.rmtree(f'{outprefix}_STARpass1')    
