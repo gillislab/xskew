@@ -92,6 +92,33 @@ def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
         shutil.rmtree(f'{outprefix}_STARgenome')
         shutil.rmtree(f'{outprefix}_STARpass1')    
 
+def star_wasp(end1, end2, vcf, outprefix, outtemp, nthreads, genomedir):
+    " STAR  --genomeDir {params.gdir} --readFilesIn {input.end1} {input.end2} "
+    " --runThreadN {threads} --twopassMode Basic --twopass1readsN -1 " 
+    " --outSAMtype BAM Unsorted --quantMode GeneCounts "
+    " --waspOutputMode SAMtag --varVCFfile {input.sfvcf} && "            
+    cmd = ['STAR',
+       '--readFilesIn', end1, end2, 
+       '--outFileNamePrefix', outprefix,
+       '--outTmpDir', outtemp, 
+       '--runThreadN', nthreads,
+       '--genomeDir', genomedir, 
+       '--twopassMode Basic',
+       '--twopass1readsN -1',
+       '--outSAMtype BAM Unsorted', 
+       '--quantMode GeneCounts',
+       '--waspOutputMode', 'SAMtag',
+       '--varVCFfile', vcf 
+       ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {end1}/{end2} input files.')
+        logging.error(traceback.format_exc(None))
+    finally:
+        shutil.rmtree(f'{outprefix}_STARgenome')
+        shutil.rmtree(f'{outprefix}_STARpass1')    
+
 
 def samtools_sort(infile, outfile, memory, nthreads):
     cmd = ['samtools',
