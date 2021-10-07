@@ -57,11 +57,9 @@ rule all:
 rule dump_fastq:
     input:
         sra = datadir + "/{sample}.sra"
-    
     output:
         end1= wdir + "/{sample}_1.fastq",    
         end2= wdir + "/{sample}_2.fastq"    
-
     resources:
         mem_mb=2048
     threads: 6
@@ -77,7 +75,6 @@ rule star_nowasp:
     input:
         end1= wdir + "/{sample}_1.fastq",   
         end2= wdir + "/{sample}_2.fastq"
-    
     output:     
         abam= wdir + "/{sample}.Aligned.out.bam",
         rpg= wdir + "/{sample}.ReadsPerGene.out.tab",
@@ -85,13 +82,11 @@ rule star_nowasp:
         log= wdir + "/{sample}.Log.out",        
         plog= wdir + "/{sample}.Log.progress.out",
         flog= wdir + "/{sample}.Log.final.out",
-            
     params:        
         tmpdir = "{sample}_starout",
         wdir = wdir + "/",
         gdir= homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/",
-        outprefix = wdir + "/{sample}."
-     
+        outprefix = wdir + "/{sample}."     
     resources:
         mem_mb=3072
     threads: 16
@@ -127,18 +122,14 @@ rule samtools2:
     input:
         bam= wdir + "/{sample}.Aligned.sortedByCoord.out.bam",
         sbai = wdir + "/{sample}.Aligned.sortedByCoord.out.bam.bai"    
-
     output:
         xbam= wdir + "/{sample}."+ chr +".bam",    
         xfiltbam= wdir + "/{sample}."+ chr +".filt.bam"    
-
     params:
         region=f"chr{chr}",
         qual = 10,
-        
     resources:
-        mem_mb=3072
-    
+        mem_mb=3072  
     threads: 1        
 
     run:
@@ -154,7 +145,6 @@ rule gatk1:
     input:
         xbam= wdir + "/{sample}."+ chr +".bam",    
         xfiltbam= wdir + "/{sample}."+ chr +".filt.bam",
-
     output:
         sfbam = wdir + "/{sample}." + chr + ".split.filtered.bam",
         svcf = wdir + "/{sample}." + chr + ".snps.vcf",
@@ -163,14 +153,12 @@ rule gatk1:
         rgbam = wdir + "/{sample}." + chr + ".rg.bam",
         ddbam = wdir + "/{sample}." + chr + ".dedupped.bam",
         metrics = wdir + "/{sample}." + chr + ".output.metrics",
-        
     params:
         tmpdir = "{sample}_tmpdir",
         chrom = chr,
         wdir = wdir + "/",
         genome = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/GRCh38.p7.genome.fa",
-        interval = f"chr{chr}"
-    
+        interval = f"chr{chr}"    
     resources:
         #mem_mb=46080
         mem_mb= 5760
@@ -191,7 +179,6 @@ rule star_wasp:
         end1= wdir + "/{sample}_1.fastq",   
         end2= wdir + "/{sample}_2.fastq",
         sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
-        
     output:     
         wabam= wdir + "/{sample}.Aligned.out.wasp.bam",
         wrpg= wdir + "/{sample}.ReadsPerGene.out.wasp.tab",
@@ -199,13 +186,11 @@ rule star_wasp:
         wlog= wdir + "/{sample}.Log.wasp.out",        
         wplog= wdir + "/{sample}.Log.progress.wasp.out",
         wflog= wdir + "/{sample}.Log.final.wasp.out",
-            
     params:        
         tmpdir = "{sample}_starout",
         wdir = wdir + "/",
         gdir= homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/",
         outprefix = wdir + "/{sample}."
-     
     resources:
         mem_mb=3072
     threads: 16
@@ -218,6 +203,24 @@ rule star_wasp:
                      outtemp= params.tmpdir,  
                      nthreads=f"{threads}", 
                      genomedir=params.gdir)
+
+
+rule samtools3: 
+    input:         
+        wabam = wdir + "/{sample}.Aligned.out.wasp.bam"    
+    output:        
+        wsbam = wdir + "/{sample}.Aligned.sortedByCoord.out.wasp.bam"
+    resources:
+        mem_mb=3072
+    threads: 20
+    run:
+        samtools_sort(infile=input.wabam, 
+                      outfile=output.wsbam, 
+                      memory=resources.mem_mb, 
+                      nthreads=f"{threads}")
+        samtools_index(infile=output.wsbam, 
+                       nthreads=f"{threads}")
+        
 
       
       
