@@ -224,5 +224,45 @@ def gatk_htc(infile, outfile, genome, interval):
 def gatk_sv(infile, outfile, genome, interval):
     " gatk SelectVariants -R {params.gdir}/GRCh38.p7.genome.fa -L chr{params.chrom} "
     "-V {params.chrom}.filtered.vcf -O {params.chrom}.snps.vcf -select-type SNP &&"
+    cmd = [ 'gatk', 
+            'SelectVariants',
+            '-R', genome,
+            '-I', infile, 
+            '-O', outfile, 
+            '-select-type', 'SNP'
+            ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {infile}')
+        logging.error(traceback.format_exc(None))
 
 
+def gatk_vf(infile, outfile, genome, interval):
+    " gatk VariantFiltration -R {params.gdir}/GRCh38.p7.genome.fa -L chr{params.chrom} "
+    " -V {params.chrom}.snps.vcf -O {params.chrom}.snps_filtered.vcf "
+    ' -filter "QD < 2.0" --filter-name "QD2" '
+    ' -filter "QUAL < 30.0" --filter-name "QUAL30" '
+    ' -filter "SOR > 3.0" --filter-name "SOR3" '
+    ' -filter "FS > 60.0" --filter-name "FS60" '
+    ' -filter "MQ < 40.0" --filter-name "MQ40" '
+    ' -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" '
+    ' -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" && '
+    cmd = [ 'gatk', 
+           'VariantFiltration',
+            '-R', genome,
+            '-I', infile, 
+            '-O', outfile,            
+            '-filter', '"QD < 2.0"', '--filter-name', '"QD2"', 
+            '-filter', '"QUAL < 30.0"', '--filter-name', '"QUAL30"',
+            '-filter', '"SOR > 3.0"', '--filter-name', '"SOR3"',
+            '-filter', '"FS > 60.0"', '--filter-name', '"FS60"',
+            '-filter', '"MQ < 40.0"', '--filter-name', '"MQ40"',
+            '-filter', '"MQRankSum < -12.5"', '--filter-name', '"MQRankSum-12.5"',
+            '-filter', '"ReadPosRankSum < -8.0"', '--filter-name',  '"ReadPosRankSum-8"'        
+        ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {infile}')
+        logging.error(traceback.format_exc(None))

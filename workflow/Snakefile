@@ -49,7 +49,7 @@ rule all:
         rgbam = expand(wdir + "/{sample}." + chr + ".rg.bam", sample=SAMPLE),
         sfbam = expand(wdir + "/{sample}." + chr + ".split.filtered.bam", sample=SAMPLE),
         xfvcf = expand(wdir + "/{sample}." + chr + ".filtered.vcf", sample=SAMPLE),
-        #sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
+        sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
         
         # from igvtools
         #wig =   expand(wdir + "/{sample}." + chr + ".split.filtered.wasp.wig", sample=SAMPLE )
@@ -157,7 +157,8 @@ rule gatk1:
 
     output:
         sfbam = wdir + "/{sample}." + chr + ".split.filtered.bam",
-        #sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
+        svcf = wdir + "/{sample}." + chr + ".snps.vcf",
+        sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
         xfvcf = wdir + "/{sample}." + chr + ".filtered.vcf",
         rgbam = wdir + "/{sample}." + chr + ".rg.bam",
         ddbam = wdir + "/{sample}." + chr + ".dedupped.bam",
@@ -181,8 +182,10 @@ rule gatk1:
         gatk_md( infile=output.rgbam, outfile=output.ddbam, metrics=output.metrics)
         gatk_sncr( infile=output.ddbam, outfile=output.sfbam, genome=params.genome )
         gatk_htc( infile=output.sfbam, outfile=output.xfvcf, genome=params.genome, interval=params.interval)
-      
-      
+        gatk_sv(infile=output.xfvcf, outfile=output.svcf, genome=params.genome, interval=params.interval )
+        gatk_vf(infile=output.svcf, outfile=output.sfvcf, genome=params.genome, interval=params.interval )      
+
+
       
       
       
