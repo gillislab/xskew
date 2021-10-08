@@ -164,13 +164,17 @@ def samtools_view_region(infile, outfile, region):
         logging.error(traceback.format_exc(None))    
     
     
-def samtools_view_quality(infile, outfile, quality):
+def samtools_view_quality(infile, outfile, quality, tag=None):
     cmd = ['samtools',
            'view',
            '-q', quality, 
            '-b', infile,
            '-o', outfile,
        ]
+    if tag is not None:
+        cmd.append('-d')
+        cmd.append(tag)
+    
     try:
         run_command(cmd)
     except NonZeroReturnException as nzre:
@@ -295,3 +299,5 @@ def gatk_vf(infile, outfile, genome, interval):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
+
+

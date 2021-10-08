@@ -219,8 +219,30 @@ rule samtools3:
         samtools_index(infile=output.wsbam, 
                        nthreads=f"{threads}")
         
+rule samtools4:
+    input:
+        wbam= wdir + "/{sample}.Aligned.sortedByCoord.out.wasp.bam",
+        wsbai = wdir + "/{sample}.Aligned.sortedByCoord.out.bam.wasp.bai"    
+    output:
+        wxbam= wdir + "/{sample}."+ chr +".wasp.bam",    
+        wxfiltbam= wdir + "/{sample}."+ chr +".wasp.filt.bam"    
+    params:
+        region=f"chr{chr}",
+        qual = 10,
+        tag = 'vW:1'
+    resources:
+        mem_mb=3072  
+    threads: 1        
 
-      
+    run:
+        samtools_view_region(infile=input.wbam, 
+                             outfile=output.wxbam, 
+                             region=params.region)
+        samtools_view_quality(infile=output.wxbam, 
+                              outfile=output.wxfiltbam,
+                              tag=params.tag, 
+                              quality=f'{params.qual}')
+     
       
       
       
