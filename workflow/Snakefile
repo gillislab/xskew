@@ -95,7 +95,6 @@ rule star_nowasp:
         star_nowasp( end1=input.end1, 
                      end2=input.end2, 
                      outprefix=params.outprefix,
-                     outtemp= params.tmpdir,  
                      nthreads=f"{threads}", 
                      genomedir=params.gdir)
 
@@ -200,7 +199,6 @@ rule star_wasp:
                      end2=input.end2,
                      vcf=input.sfvcf, 
                      outprefix=params.outprefix,
-                     outtemp= params.tmpdir,  
                      nthreads=f"{threads}", 
                      genomedir=params.gdir)
 
