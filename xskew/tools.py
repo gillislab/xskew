@@ -69,13 +69,14 @@ def fasterq_dump(infile, outdir, nthreads, tempdir ):
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
 
+#def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
 
-def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
+def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
             
     cmd = ['STAR',
        '--readFilesIn', end1, end2, 
        '--outFileNamePrefix', outprefix,
-       '--outTmpDir', outtemp, 
+#       '--outTmpDir', outtemp, 
        '--runThreadN', nthreads,
        '--genomeDir', genomedir, 
        '--twopassMode Basic',
@@ -92,7 +93,8 @@ def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
         shutil.rmtree(f'{outprefix}_STARgenome')
         shutil.rmtree(f'{outprefix}_STARpass1')    
 
-def star_wasp(end1, end2, vcf, outprefix, outtemp, nthreads, genomedir):
+#def star_wasp(end1, end2, vcf, outprefix, outtemp, nthreads, genomedir):
+def star_wasp(end1, end2, vcf, outprefix, nthreads, genomedir):
     " STAR  --genomeDir {params.gdir} --readFilesIn {input.end1} {input.end2} "
     " --runThreadN {threads} --twopassMode Basic --twopass1readsN -1 " 
     " --outSAMtype BAM Unsorted --quantMode GeneCounts "
@@ -100,7 +102,7 @@ def star_wasp(end1, end2, vcf, outprefix, outtemp, nthreads, genomedir):
     cmd = ['STAR',
        '--readFilesIn', end1, end2, 
        '--outFileNamePrefix', outprefix,
-       '--outTmpDir', outtemp, 
+ #      '--outTmpDir', outtemp, 
        '--runThreadN', nthreads,
        '--genomeDir', genomedir, 
        '--twopassMode Basic',
