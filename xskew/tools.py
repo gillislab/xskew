@@ -309,4 +309,21 @@ def gatk_vf(infile, outfile, genome, interval):
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
 
-
+def igvtools_count(infile, outfile):
+    " igvtools count -z 0 -w 1 --bases --strands read {input.sfbam} " 
+    " mv -v tmp.{wildcards.sample}.wig {output.splitwig}  && "
+    cmd = [ 'igvtools',
+            'count',
+            '-z','0',
+            '-w','1',
+            '--bases',
+            '--strands',
+            'read',
+            infile, 
+            ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {infile}')
+        logging.error(traceback.format_exc(None))         
+              

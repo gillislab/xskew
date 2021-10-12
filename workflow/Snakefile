@@ -57,7 +57,7 @@ rule all:
         sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
         
         # from igvtools
-        #wig =   expand(wdir + "/{sample}." + chr + ".split.filtered.wasp.wig", sample=SAMPLE )
+        #wwig =   expand(wdir + "/{sample}." + chr + ".split.filtered.wasp.wig", sample=SAMPLE )
 
 rule dump_fastq:
     input:
@@ -279,9 +279,23 @@ rule gatk2:
         gatk_sv(infile=output.wxfvcf, outfile=output.wsvcf, genome=params.genome, interval=params.interval )
         gatk_vf(infile=output.wsvcf, outfile=output.wsfvcf, genome=params.genome, interval=params.interval )      
 
+rule igvtools7:    
+    input:
+        wsfbam= wdir + "/{sample}." + chr + ".split.filtered.wasp.bam",
+
+    output:
+        wwig= wdir + "/{sample}." + chr + ".split.filtered.wasp.wig", 
+        
+    resources:
+        mem_mb=12288
+    threads: 1
+    
+    params:
+        wdir = wdir + "/",
+        chrom=chr,      
       
-      
-      
+    run:
+        igvtools_count(input.wsfbam, output.wwig)      
       
       
       
