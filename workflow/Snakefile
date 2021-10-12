@@ -1,5 +1,9 @@
 #
 #
+# Genomes in /data/johlee/cross_mammal_xci/genomes
+# Data in /data/johlee/cross_mammal_xci/temp/sra
+#
+#
 #
 
 import os
@@ -40,10 +44,11 @@ rule all:
         xbam = expand(wdir + "/{sample}.X.bam", sample=SAMPLE ),
         xfiltbam = expand(wdir + "/{sample}.X.filt.bam", sample=SAMPLE ),
         
-        # from STAR
+        # from STAR wasp
         wlog = expand(wdir + "/{sample}.Log.wasp.out", sample=SAMPLE ),        
         wflog= expand(wdir +"/{sample}.Log.final.wasp.out", sample=SAMPLE),
         wrpg=  expand(wdir +"/{sample}.ReadsPerGene.out.wasp.tab",    sample=SAMPLE),        
+        wabam= expand(wdir + "/{sample}.Aligned.out.wasp.bam",  sample=SAMPLE), 
 
         # from gatk
         rgbam = expand(wdir + "/{sample}." + chr + ".rg.bam", sample=SAMPLE),
@@ -153,7 +158,6 @@ rule gatk1:
         ddbam = wdir + "/{sample}." + chr + ".dedupped.bam",
         metrics = wdir + "/{sample}." + chr + ".output.metrics",
     params:
-        tmpdir = "{sample}_tmpdir",
         chrom = chr,
         wdir = wdir + "/",
         genome = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/GRCh38.p7.genome.fa",
@@ -243,6 +247,38 @@ rule samtools4:
                               tag=params.tag, 
                               quality=f'{params.qual}')
      
+rule gatk2:        
+    input:
+        wxbam= wdir + "/{sample}."+ chr +".wasp.bam",    
+        wxfiltbam= wdir + "/{sample}."+ chr +".wasp.filt.bam",
+    output:
+        wsfbam = wdir + "/{sample}." + chr + ".wasp.split.filtered.bam",
+        wsvcf = wdir + "/{sample}." + chr + ".wasp.snps.vcf",
+        wsfvcf = wdir + "/{sample}." + chr + ".wasp.snps_filtered.vcf",
+        wxfvcf = wdir + "/{sample}." + chr + ".wasp.filtered.vcf",
+        wrgbam = wdir + "/{sample}." + chr + ".wasp.rg.bam",
+        wddbam = wdir + "/{sample}." + chr + ".wasp.dedupped.bam",
+        wmetrics = wdir + "/{sample}." + chr + ".wasp.output.metrics",
+    
+    params:
+        chrom = chr,
+        wdir = wdir + "/",
+        genome = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/GRCh38.p7.genome.fa",
+        interval = f"chr{chr}"    
+    resources:
+        #mem_mb=46080
+        mem_mb= 5760
+    #threads: 1
+    threads: 8
+    
+    run:
+        gatk_arrg( infile=input.wxfiltbam, outfile=output.wrgbam)
+        gatk_md( infile=output.wrgbam, outfile=output.wddbam, metrics=output.wmetrics)
+        gatk_sncr( infile=output.wddbam, outfile=output.wsfbam, genome=params.genome )
+        gatk_htc( infile=output.wsfbam, outfile=output.wxfvcf, genome=params.genome, interval=params.interval)
+        gatk_sv(infile=output.wxfvcf, outfile=output.wsvcf, genome=params.genome, interval=params.interval )
+        gatk_vf(infile=output.wsvcf, outfile=output.wsfvcf, genome=params.genome, interval=params.interval )      
+
       
       
       

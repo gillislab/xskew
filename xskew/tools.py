@@ -4,6 +4,10 @@ import shutil
 import subprocess
 import sys
 
+
+STARSUBDIRS = ['_STARgenome', '_STARpass1','_STARtmp' ]
+
+
 class NonZeroReturnException(Exception):
     """
     Thrown when a command has non-zero return code. 
@@ -80,7 +84,7 @@ def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
        '--runThreadN', nthreads,
        '--genomeDir', genomedir, 
        '--twopassMode Basic',
-       '--twopass1readsN -1',
+       '--twopass1readsN','-1',
        '--outSAMtype BAM Unsorted', 
        '--quantMode GeneCounts'
        ]
@@ -90,8 +94,10 @@ def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
         logging.error(f'problem with {end1}/{end2} input files.')
         logging.error(traceback.format_exc(None))
     finally:
-        shutil.rmtree(f'{outprefix}_STARgenome')
-        shutil.rmtree(f'{outprefix}_STARpass1')    
+        for ext in STARSUBDIRS:
+            dirpath = f'{outprefix}{ext}'
+            if os.path.exists(dirpath) and os.path.isdir(dirpath):
+                shutil.rmtree(dirpath)    
 
 #def star_wasp(end1, end2, vcf, outprefix, outtemp, nthreads, genomedir):
 def star_wasp(end1, end2, vcf, outprefix, nthreads, genomedir):
@@ -118,8 +124,11 @@ def star_wasp(end1, end2, vcf, outprefix, nthreads, genomedir):
         logging.error(f'problem with {end1}/{end2} input files.')
         logging.error(traceback.format_exc(None))
     finally:
-        shutil.rmtree(f'{outprefix}_STARgenome')
-        shutil.rmtree(f'{outprefix}_STARpass1')    
+        for ext in STARSUBDIRS:
+            dirpath = f'{outprefix}{ext}'
+            if os.path.exists(dirpath) and os.path.isdir(dirpath):
+                shutil.rmtree(dirpath)
+  
 
 
 def samtools_sort(infile, outfile, memory, nthreads):
