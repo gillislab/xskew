@@ -182,17 +182,17 @@ rule star_wasp:
         end2= wdir + "/{sample}_2.fastq",
         sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
     output:     
-        wabam= wdir + "/{sample}.Aligned.out.wasp.bam",
-        wrpg= wdir + "/{sample}.ReadsPerGene.out.wasp.tab",
-        wsjtab= wdir + "/{sample}.SJ.out.wasp.tab",
-        wlog= wdir + "/{sample}.Log.wasp.out",        
-        wplog= wdir + "/{sample}.Log.progress.wasp.out",
-        wflog= wdir + "/{sample}.Log.final.wasp.out",
+        wabam= wdir + "/{sample}.wasp.Aligned.out.bam",
+        wrpg= wdir + "/{sample}.wasp.ReadsPerGene.out.tab",
+        wsjtab= wdir + "/{sample}.wasp.SJ.out.tab",
+        wlog= wdir + "/{sample}.wasp.Log.out",        
+        wplog= wdir + "/{sample}.wasp.Log.progress.out",
+        wflog= wdir + "/{sample}.wasp.Log.final.out",
     params:        
         tmpdir = wdir + "/{sample}_starout",
         wdir = wdir + "/",
         gdir= homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/",
-        outprefix = wdir + "/{sample}."
+        outprefix = wdir + "/{sample}.wasp."
     resources:
         mem_mb=3072
     threads: 16
@@ -208,9 +208,9 @@ rule star_wasp:
 
 rule samtools3: 
     input:         
-        wabam = wdir + "/{sample}.Aligned.out.wasp.bam"    
+        wabam = wdir + "/{sample}.wasp.Aligned.out.bam"    
     output:        
-        wsbam = wdir + "/{sample}.Aligned.sortedByCoord.out.wasp.bam"
+        wsbam = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam"
     resources:
         mem_mb=3072
     threads: 20
@@ -224,11 +224,11 @@ rule samtools3:
         
 rule samtools4:
     input:
-        wbam= wdir + "/{sample}.Aligned.sortedByCoord.out.wasp.bam",
-        wsbai = wdir + "/{sample}.Aligned.sortedByCoord.out.bam.wasp.bai"    
+        wbam= wdir + "/{sample}.waspAligned.sortedByCoord.out.bam",
+        wsbai = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai"    
     output:
-        wxbam= wdir + "/{sample}."+ chr +".wasp.bam",    
-        wxfiltbam= wdir + "/{sample}."+ chr +".wasp.filt.bam"    
+        wxbam= wdir + "/{sample}.wasp."+ chr +".bam",    
+        wxfiltbam= wdir + "/{sample}.wasp."+ chr +".filt.bam"    
     params:
         region=f"chr{chr}",
         qual = 10,
@@ -248,16 +248,16 @@ rule samtools4:
      
 rule gatk2:        
     input:
-        wxbam= wdir + "/{sample}."+ chr +".wasp.bam",    
-        wxfiltbam= wdir + "/{sample}."+ chr +".wasp.filt.bam",
+        wxbam= wdir + "/{sample}.wasp."+ chr +".bam",    
+        wxfiltbam= wdir + "/{sample}.wasp."+ chr +".filt.bam",
     output:
-        wsfbam = wdir + "/{sample}." + chr + ".wasp.split.filtered.bam",
-        wsvcf = wdir + "/{sample}." + chr + ".wasp.snps.vcf",
-        wsfvcf = wdir + "/{sample}." + chr + ".wasp.snps_filtered.vcf",
-        wxfvcf = wdir + "/{sample}." + chr + ".wasp.filtered.vcf",
-        wrgbam = wdir + "/{sample}." + chr + ".wasp.rg.bam",
-        wddbam = wdir + "/{sample}." + chr + ".wasp.dedupped.bam",
-        wmetrics = wdir + "/{sample}." + chr + ".wasp.output.metrics",
+        wsfbam = wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",
+        wsvcf = wdir + "/{sample}.wasp." + chr + ".snps.vcf",
+        wsfvcf = wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf",
+        wxfvcf = wdir + "/{sample}.wasp." + chr + ".filtered.vcf",
+        wrgbam = wdir + "/{sample}.wasp." + chr + ".rg.bam",
+        wddbam = wdir + "/{sample}.wasp." + chr + ".dedupped.bam",
+        wmetrics = wdir + "/{sample}.wasp." + chr + ".output.metrics",
     
     params:
         chrom = chr,
@@ -280,10 +280,10 @@ rule gatk2:
 
 rule igvtools7:    
     input:
-        wsfbam= wdir + "/{sample}." + chr + ".split.filtered.wasp.bam",
+        wsfbam= wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",
 
     output:
-        wwig= wdir + "/{sample}." + chr + ".split.filtered.wasp.wig", 
+        wwig= wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", 
         
     resources:
         mem_mb=12288

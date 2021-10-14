@@ -1,0 +1,28 @@
+
+?? snakemake --config species="Homo sapiens"  ??
+
+
+Initial alignment. ~25 minutes. 
+? Full run ~25 minutes. 
+
+GTEX test samples from jon
+=================================
+SRR15206524 is male. 
+
+
+SRR1499699
+
+
+
+SRA samples
+=================================
+
+
+
+
+ERRORS
+=================================
+
+gatk VariantFiltration -R /home/hover/data/genomes/GRCh38_Gencode25.2.4.9a/GRCh38.p7.genome.fa -V /home/hover/work/xskew1/SRR1499699.X.snps.vcf -O /home/hover/work/xskew1/SRR1499699.X.snps_filtered.vcf -filter "QD < 2.0" --filter-name "QD2" -filter "QUAL < 30.0" --filter-name "QUAL30" -filter "SOR > 3.0" --filter-name "SOR3" -filter "FS > 60.0" --filter-name "FS60" -filter "MQ < 40.0" --filter-name "MQ40" -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8"
+
+java.lang.ClassCastException: java.lang.String cannot be cast to java.lang.Boolean
