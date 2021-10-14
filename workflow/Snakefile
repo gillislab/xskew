@@ -56,7 +56,7 @@ rule all:
         sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
         
         # from igvtools
-        #wwig =   expand(wdir + "/{sample}." + chr + ".split.filtered.wasp.wig", sample=SAMPLE )
+        wwig =   expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE )
 
 rule dump_fastq:
     input:

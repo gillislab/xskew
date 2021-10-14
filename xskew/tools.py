@@ -251,6 +251,7 @@ def gatk_htc(infile, outfile, genome, interval):
     " -O {params.chrom}.filtered.vcf && "    
     cmd = [ 'gatk',
            'HaplotypeCaller',
+           '-L', interval, 
            '-R', genome,
            '-I', infile, 
            '-O', outfile,  
@@ -269,6 +270,7 @@ def gatk_sv(infile, outfile, genome, interval):
     "-V {params.chrom}.filtered.vcf -O {params.chrom}.snps.vcf -select-type SNP &&"
     cmd = [ 'gatk', 
             'SelectVariants',
+            '-L', interval,             
             '-R', genome,
             '-V', infile, 
             '-O', outfile, 
@@ -294,6 +296,7 @@ def gatk_vf(infile, outfile, genome, interval):
     cmd = [ 'gatk', 
            'VariantFiltration',
             '-R', genome,
+            '-L', interval, 
             '-V', infile, 
             '-O', outfile,            
             '-filter', '"QD < 2.0"', '--filter-name', '"QD2"', 
