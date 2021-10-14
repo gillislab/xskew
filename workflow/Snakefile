@@ -184,12 +184,17 @@ rule gatk1:
     
     run:
         gatk_arrg( infile=input.xfiltbam, outfile=output.rgbam)
+        list_sample(infile=input.xfiltbam)
         gatk_md( infile=output.rgbam, outfile=output.ddbam, metrics=output.metrics)
+        list_sample(infile=input.xfiltbam)
         gatk_sncr( infile=output.ddbam, outfile=output.sfbam, genome=params.genome )
+        list_sample(infile=input.xfiltbam)
         gatk_htc( infile=output.sfbam, outfile=output.xfvcf, genome=params.genome, interval=params.interval)
+        list_sample(infile=input.xfiltbam)        
         gatk_sv(infile=output.xfvcf, outfile=output.svcf, genome=params.genome, interval=params.interval )
+        list_sample(infile=input.xfiltbam)
         gatk_vf(infile=output.svcf, outfile=output.sfvcf, genome=params.genome, interval=params.interval )      
-
+        list_sample(infile=input.xfiltbam)
 
 rule star_wasp:
     input:
@@ -268,12 +273,12 @@ rule gatk2:
         wxbam= wdir + "/{sample}.wasp."+ chr +".bam",    
         wxfiltbam= wdir + "/{sample}.wasp."+ chr +".filt.bam",
     output:
-        wsfbam = wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",
-        wsvcf = wdir + "/{sample}.wasp." + chr + ".snps.vcf",
-        wsfvcf = wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf",
-        wxfvcf = wdir + "/{sample}.wasp." + chr + ".filtered.vcf",
         wrgbam = wdir + "/{sample}.wasp." + chr + ".rg.bam",
         wddbam = wdir + "/{sample}.wasp." + chr + ".dedupped.bam",
+        wsfbam = wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",
+        wxfvcf = wdir + "/{sample}.wasp." + chr + ".filtered.vcf",
+        wsvcf = wdir + "/{sample}.wasp." + chr + ".snps.vcf",
+        wsfvcf = wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf",
         wmetrics = wdir + "/{sample}.wasp." + chr + ".output.metrics",
     
     params:
@@ -289,11 +294,18 @@ rule gatk2:
     
     run:
         gatk_arrg( infile=input.wxfiltbam, outfile=output.wrgbam)
+        list_sample(infile=input.wxfiltbam)
         gatk_md( infile=output.wrgbam, outfile=output.wddbam, metrics=output.wmetrics)
+        list_sample(infile=input.wxfiltbam)
         gatk_sncr( infile=output.wddbam, outfile=output.wsfbam, genome=params.genome )
+        list_sample(infile=input.wxfiltbam)
         gatk_htc( infile=output.wsfbam, outfile=output.wxfvcf, genome=params.genome, interval=params.interval)
-        gatk_sv(infile=output.wxfvcf, outfile=output.wsvcf, genome=params.genome, interval=params.interval )
-        gatk_vf(infile=output.wsvcf, outfile=output.wsfvcf, genome=params.genome, interval=params.interval )      
+        list_sample(infile=input.wxfiltbam)
+        gatk_sv( infile=output.wxfvcf, outfile=output.wsvcf, genome=params.genome, interval=params.interval )
+        list_sample(infile=input.wxfiltbam)
+        gatk_vf( infile=output.wsvcf, outfile=output.wsfvcf, genome=params.genome, interval=params.interval )
+        list_sample(infile=input.wxfiltbam)      
+
 
 rule igvtools7:    
     input:

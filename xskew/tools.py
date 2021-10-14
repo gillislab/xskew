@@ -85,6 +85,25 @@ def run_command_shell(cmd):
     else:
         logging.warn(f'non-zero return code for cmd {cmdstr}')
 
+def list_sample(infile):
+    """
+    log a directory listing of all files starting with <sample>. for infile. 
+    e.g. /home/hover/work/xskew1/SRR1480384.X.rg.bam
+    log a directory listing, with sizes, for all files starting with SRR1480384 in /home/hover/work/xskew1/
+    
+    """
+    listing = ""    
+    filename= os.path.basename(infile)
+    dirname=os.path.dirname(infile)
+    sampleid= filename.split('.')[0]
+    dirlist = os.listdir(dirname)
+    for x in dirlist:
+        if x.startswith(sampleid):
+            st = os.stat(x)
+            filesize = st.st_size
+            listing += f"{x}\t{filesize}\n"
+    logging.debug(f"directory listing for sample {sampleid}:\n{listing}")
+
 
         
 def fasterq_dump(infile, outdir, nthreads, tempdir ):
