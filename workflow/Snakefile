@@ -216,7 +216,7 @@ rule samtools3:
     input:         
         wabam = wdir + "/{sample}.wasp.Aligned.out.bam"    
     output:        
-        wsbam = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam"
+        wsbam = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam",
         wsbai = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai"
     resources:
         mem_mb=3072
