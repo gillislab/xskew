@@ -45,7 +45,7 @@ rule all:
         
         # from STAR wasp
         wlog = expand(wdir + "/{sample}.wasp.Log.out", sample=SAMPLE ),        
-        wflog= expand(wdir +"/{sample}.wasp.Log.finalout", sample=SAMPLE),
+        wflog= expand(wdir +"/{sample}.wasp.Log.final.out", sample=SAMPLE),
         wrpg=  expand(wdir +"/{sample}.wasp.ReadsPerGene.out.tab",    sample=SAMPLE),        
         wabam= expand(wdir + "/{sample}.wasp.Aligned.out.bam",  sample=SAMPLE), 
 
@@ -188,6 +188,7 @@ rule star_wasp:
         wlog= wdir + "/{sample}.wasp.Log.out",        
         wplog= wdir + "/{sample}.wasp.Log.progress.out",
         wflog= wdir + "/{sample}.wasp.Log.final.out",
+
     params:        
         tmpdir = wdir + "/{sample}_starout",
         wdir = wdir + "/",
