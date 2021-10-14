@@ -383,7 +383,7 @@ def igvtools_count(infile, outfile):
             'read',
             infile,
             outfile,
-            'hg18' 
+            'hg38' 
             ]
     try:
         run_command(cmd)
