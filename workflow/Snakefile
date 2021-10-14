@@ -1,10 +1,8 @@
 #
-#
 # Genomes in /data/johlee/cross_mammal_xci/genomes
 # Data in /data/johlee/cross_mammal_xci/temp/sra
 #
-#
-#
+
 
 import os
 import sys
@@ -14,6 +12,7 @@ gitpath=os.path.expanduser("~/git/xskew")
 sys.path.append(gitpath)
 
 species='Homo_sapiens'
+genomedir = os.path.expanduser(f'~/data/cross_mammal_xci/genomes/{species}')
 datadir = os.path.expanduser(f'~/data/cross_mammal_xci/temp/sra/{species}')
 homedir = os.path.expanduser("~/")
 wdir = f"{homedir}work/xskew1"

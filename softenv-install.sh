@@ -7,7 +7,8 @@ conda activate xskew
 
 conda install -c conda-forge -c bioconda python snakemake=6.8.0 star gatk4 samtools bamtools sra-tools=2.11.0 igvtools openjdk
 
-# Move jdk11 to igvtoolsdir. 
+# Move jdk-11 to igvtoolsdir so launch script notices it as local JDK
+#  vs. JDK8 which is used for gatk4 
 cd ~/src 
 wget https://data.broadinstitute.org/igv/projects/downloads/2.5/IGV_Linux_2.5.3.zip
 unzip IGV_Linux_2.5.3.zip 
