@@ -381,7 +381,9 @@ def igvtools_count(infile, outfile):
             '--bases',
             '--strands',
             'read',
-            infile, 
+            infile,
+            outfile,
+            'hg18' 
             ]
     try:
         run_command(cmd)
