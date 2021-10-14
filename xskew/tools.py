@@ -66,10 +66,14 @@ def run_command_shell(cmd):
     cmdstr = " ".join(cmd)
     logging.info(f"running command: {cmdstr} ")
     start = dt.datetime.now()
-    cp = subprocess.run(cmd, 
+    cp = subprocess.run(" ".join(cmd), 
                     shell=True, 
                     stdout=subprocess.PIPE, 
                     stderr=subprocess.STDOUT)
+    #cp = subprocess.run(cmd, 
+    #                shell=True, 
+    #                stdout=subprocess.PIPE, 
+    #                stderr=subprocess.STDOUT)
     end = dt.datetime.now()
     elapsed =  end - start
     logging.debug(f"ran cmd='{cmdstr}' return={cp.returncode} {elapsed.seconds} seconds.")
