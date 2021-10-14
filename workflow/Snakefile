@@ -18,6 +18,7 @@ homedir = os.path.expanduser("~/")
 wdir = f"{homedir}work/xskew1"
 chr="X"
 
+
 from xskew.tools import *
 setup_logging(logging.DEBUG)
 
@@ -27,6 +28,10 @@ logging.debug('in snakefile...')
 
 logging.debug(f"HOME={homedir} WORKDIR={wdir} CHR={chr}")
 logging.debug(f"SAMPLE={SAMPLE}")
+
+
+wildcard_constraints:
+    sample="\w+"
 
 
 rule all:
@@ -42,12 +47,6 @@ rule all:
         sbam = expand(wdir + "/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLE ),
         xbam = expand(wdir + "/{sample}.X.bam", sample=SAMPLE ),
         xfiltbam = expand(wdir + "/{sample}.X.filt.bam", sample=SAMPLE ),
-        
-        # from STAR wasp
-        wlog = expand(wdir + "/{sample}.wasp.Log.out", sample=SAMPLE ),        
-        wflog= expand(wdir +"/{sample}.wasp.Log.final.out", sample=SAMPLE),
-        wrpg=  expand(wdir +"/{sample}.wasp.ReadsPerGene.out.tab",    sample=SAMPLE),        
-        wabam= expand(wdir + "/{sample}.wasp.Aligned.out.bam",  sample=SAMPLE), 
 
         # from gatk
         rgbam = expand(wdir + "/{sample}." + chr + ".rg.bam", sample=SAMPLE),
@@ -55,6 +54,14 @@ rule all:
         xfvcf = expand(wdir + "/{sample}." + chr + ".filtered.vcf", sample=SAMPLE),
         sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
         
+        # from STAR wasp
+        wabam= expand(wdir + "/{sample}.wasp.Aligned.out.bam",  sample=SAMPLE), 
+        wlog = expand(wdir + "/{sample}.wasp.Log.out", sample=SAMPLE ),        
+        wflog= expand(wdir +"/{sample}.wasp.Log.final.out", sample=SAMPLE),
+        wrpg=  expand(wdir +"/{sample}.wasp.ReadsPerGene.out.tab",    sample=SAMPLE),        
+
+
+
         # from igvtools
         wwig =   expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE )
 
