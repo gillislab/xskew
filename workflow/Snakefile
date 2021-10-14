@@ -29,7 +29,7 @@ logging.debug('in snakefile...')
 logging.debug(f"HOME={homedir} WORKDIR={wdir} CHR={chr}")
 logging.debug(f"SAMPLE={SAMPLE}")
 
-
+# Needed to avoid matching anything past the '.', e.g. XYZ.wasp.<sufficx> 
 wildcard_constraints:
     sample="\w+"
 
@@ -59,6 +59,15 @@ rule all:
         wlog = expand(wdir + "/{sample}.wasp.Log.out", sample=SAMPLE ),        
         wflog= expand(wdir +"/{sample}.wasp.Log.final.out", sample=SAMPLE),
         wrpg=  expand(wdir +"/{sample}.wasp.ReadsPerGene.out.tab",    sample=SAMPLE),        
+
+        # from GATK2
+        wsfbam = expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",  sample=SAMPLE), 
+        wsvcf =  expand(wdir + "/{sample}.wasp." + chr + ".snps.vcf", sample=SAMPLE), 
+        wsfvcf = expand(wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf", sample=SAMPLE), 
+        wxfvcf = expand(wdir + "/{sample}.wasp." + chr + ".filtered.vcf", sample=SAMPLE), 
+        wrgbam = expand(wdir + "/{sample}.wasp." + chr + ".rg.bam", sample=SAMPLE), 
+        wddbam = expand(wdir + "/{sample}.wasp." + chr + ".dedupped.bam", sample=SAMPLE), 
+        wmetrics = expand(wdir + "/{sample}.wasp." + chr + ".output.metrics", sample=SAMPLE), 
 
         # from igvtools
         wwig =   expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE )
@@ -154,18 +163,19 @@ rule gatk1:
         xbam= wdir + "/{sample}."+ chr +".bam",    
         xfiltbam= wdir + "/{sample}."+ chr +".filt.bam",
     output:
-        sfbam = wdir + "/{sample}." + chr + ".split.filtered.bam",
-        svcf = wdir + "/{sample}." + chr + ".snps.vcf",
-        sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
-        xfvcf = wdir + "/{sample}." + chr + ".filtered.vcf",
         rgbam = wdir + "/{sample}." + chr + ".rg.bam",
         ddbam = wdir + "/{sample}." + chr + ".dedupped.bam",
+        sfbam = wdir + "/{sample}." + chr + ".split.filtered.bam",
+        xfvcf = wdir + "/{sample}." + chr + ".filtered.vcf",
+        svcf =  wdir + "/{sample}." + chr + ".snps.vcf",
+        sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
         metrics = wdir + "/{sample}." + chr + ".output.metrics",
+
     params:
         chrom = chr,
         wdir = wdir + "/",
         genome = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/GRCh38.p7.genome.fa",
-        interval = f"chr{chr}"    
+        interval = f"chr{chr}",    
     resources:
         #mem_mb=46080
         mem_mb= 5760

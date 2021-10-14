@@ -236,10 +236,11 @@ def gatk_arrg(infile, outfile):
             '-RGSM', 'sample'
         ]
     try:
-        run_command(cmd)
+        run_command_shell(cmd)
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))    
+
 
 def gatk_md(infile, outfile, metrics):
     " gatk MarkDuplicates -I={params.chrom}.rg.bam -O={params.chrom}.dedupped.bam -CREATE_INDEX=true " 
@@ -254,7 +255,7 @@ def gatk_md(infile, outfile, metrics):
            '-M', metrics,
            ]
     try:
-        run_command(cmd)
+        run_command_shell(cmd)
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
@@ -269,7 +270,7 @@ def gatk_sncr(infile, outfile, genome ):
            #'--java-options', "'-XXgcThreads:2 -XX:ConcGCThreads'" 
            ]
     try:
-        run_command(cmd)
+        run_command_shell(cmd)
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))           
@@ -289,7 +290,7 @@ def gatk_htc(infile, outfile, genome, interval):
            '-stand-call-conf', '0.0',
            ]
     try:
-        run_command(cmd)
+        run_command_shell(cmd)
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
@@ -307,7 +308,7 @@ def gatk_sv(infile, outfile, genome, interval):
             '-select-type', 'SNP'
             ]
     try:
-        run_command(cmd)
+        run_command_shell(cmd)
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
