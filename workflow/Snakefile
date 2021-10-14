@@ -44,10 +44,10 @@ rule all:
         xfiltbam = expand(wdir + "/{sample}.X.filt.bam", sample=SAMPLE ),
         
         # from STAR wasp
-        wlog = expand(wdir + "/{sample}.Log.wasp.out", sample=SAMPLE ),        
-        wflog= expand(wdir +"/{sample}.Log.final.wasp.out", sample=SAMPLE),
-        wrpg=  expand(wdir +"/{sample}.ReadsPerGene.out.wasp.tab",    sample=SAMPLE),        
-        wabam= expand(wdir + "/{sample}.Aligned.out.wasp.bam",  sample=SAMPLE), 
+        wlog = expand(wdir + "/{sample}.wasp.Log.out", sample=SAMPLE ),        
+        wflog= expand(wdir +"/{sample}.wasp.Log.finalout", sample=SAMPLE),
+        wrpg=  expand(wdir +"/{sample}.wasp.ReadsPerGene.out.tab",    sample=SAMPLE),        
+        wabam= expand(wdir + "/{sample}.wasp.Aligned.out.bam",  sample=SAMPLE), 
 
         # from gatk
         rgbam = expand(wdir + "/{sample}." + chr + ".rg.bam", sample=SAMPLE),
