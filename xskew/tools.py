@@ -29,7 +29,7 @@ def setup_logging(level):
     logger.setLevel(level)
 
 
-def run_command(cmd):
+def run_command(cmd, text=True ):
     """
     cmd should be standard list of tokens...  ['cmd','arg1','arg2'] with cmd on shell PATH.
     
@@ -38,7 +38,7 @@ def run_command(cmd):
     logging.info(f"running command: {cmdstr} ")
     start = dt.datetime.now()
     cp = subprocess.run(cmd, 
-                    text=True, 
+                    text=text, 
                     stdout=subprocess.PIPE, 
                     stderr=subprocess.STDOUT)
     end = dt.datetime.now()
@@ -308,7 +308,7 @@ def gatk_vf(infile, outfile, genome, interval):
             '-filter', '"ReadPosRankSum < -8.0"', '--filter-name',  '"ReadPosRankSum-8"'        
         ]
     try:
-        run_command(cmd)
+        run_command(cmd, text=False)
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
