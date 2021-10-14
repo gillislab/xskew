@@ -29,7 +29,7 @@ def setup_logging(level):
     logger.setLevel(level)
 
 
-def run_command(cmd, text=True ):
+def run_command(cmd):
     """
     cmd should be standard list of tokens...  ['cmd','arg1','arg2'] with cmd on shell PATH.
     
@@ -38,7 +38,7 @@ def run_command(cmd, text=True ):
     logging.info(f"running command: {cmdstr} ")
     start = dt.datetime.now()
     cp = subprocess.run(cmd, 
-                    text=text, 
+                    text=True, 
                     stdout=subprocess.PIPE, 
                     stderr=subprocess.STDOUT)
     end = dt.datetime.now()
@@ -55,6 +55,36 @@ def run_command(cmd, text=True ):
         return(cp.stderr, cp.stdout,cp.returncode)
     else:
         logging.warn(f'non-zero return code for cmd {cmdstr}')
+
+
+def run_command_shell(cmd):
+    """
+    maybe subprocess.run(" ".join(cmd), shell=True)
+    cmd should be standard list of tokens...  ['cmd','arg1','arg2'] with cmd on shell PATH.
+    
+    """
+    cmdstr = " ".join(cmd)
+    logging.info(f"running command: {cmdstr} ")
+    start = dt.datetime.now()
+    cp = subprocess.run(cmd, 
+                    shell=True, 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.STDOUT)
+    end = dt.datetime.now()
+    elapsed =  end - start
+    logging.debug(f"ran cmd='{cmdstr}' return={cp.returncode} {elapsed.seconds} seconds.")
+    
+    if cp.stderr is not None:
+        logging.debug(f"got stderr: {cp.stderr}")
+    if cp.stdout is not None:
+        logging.debug(f"got stdout: {cp.stdout}")
+    
+    if str(cp.returncode) == '0':
+        logging.info(f'successfully ran {cmdstr}')
+        return(cp.stderr, cp.stdout,cp.returncode)
+    else:
+        logging.warn(f'non-zero return code for cmd {cmdstr}')
+
 
         
 def fasterq_dump(infile, outdir, nthreads, tempdir ):
@@ -284,6 +314,10 @@ def gatk_sv(infile, outfile, genome, interval):
 
 
 def gatk_vf(infile, outfile, genome, interval):
+    '''
+      maybe subprocess.run(" ".join(cmd), shell=True)
+    
+    '''
     " gatk VariantFiltration -R {params.gdir}/GRCh38.p7.genome.fa -L chr{params.chrom} "
     " -V {params.chrom}.snps.vcf -O {params.chrom}.snps_filtered.vcf "
     ' -filter "QD < 2.0" --filter-name "QD2" '
@@ -308,7 +342,7 @@ def gatk_vf(infile, outfile, genome, interval):
             '-filter', '"ReadPosRankSum < -8.0"', '--filter-name',  '"ReadPosRankSum-8"'        
         ]
     try:
-        run_command(cmd, text=False)
+        run_command_shell(cmd)
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
