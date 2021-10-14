@@ -232,7 +232,7 @@ rule samtools3:
         
 rule samtools4:
     input:
-        wbam= wdir + "/{sample}.waspAligned.sortedByCoord.out.bam",
+        wbam= wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam",
         wsbai = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai"    
     output:
         wxbam= wdir + "/{sample}.wasp."+ chr +".bam",    
