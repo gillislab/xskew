@@ -1,7 +1,7 @@
 #
 # Genomes in /data/johlee/cross_mammal_xci/genomes
 # Data in /data/johlee/cross_mammal_xci/temp/sra
-#
+# #  snakemake --jobs 20 --cluster "qsub -N xskew1 -pe threads {threads} -wd ~/work/xskew1 -l m_mem_free={resources.mem_mb}M 
 
 
 import os
