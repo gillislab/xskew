@@ -113,7 +113,7 @@ rule build_genome_idx:
                     nthreads=f"{threads}", 
                     gtffile=input.gtf, 
                     infile=input.gfa )
-        samtools_faidx(input.gfa)
+        samtools_faidx(input.gfa, output.gfai)
         samtools_dict(input.gfa, output.gdict)
 
 

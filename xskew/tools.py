@@ -206,7 +206,8 @@ def star_wasp(end1, end2, vcf, outprefix, nthreads, genomedir):
 def samtools_faidx(infile):
     cmd = ['samtools',
            'faidx',
-           infile
+           '-o', outfile
+           infile, 
        ]
     try:
         run_command(cmd)
@@ -215,11 +216,11 @@ def samtools_faidx(infile):
         logging.error(traceback.format_exc(None))
         raise            
         
-def samtools_dict(infile):
+def samtools_dict(infile, outfile):
     cmd = ['samtools',
            'dict',
+           '-o', outfile
            infile, 
-           outfile
        ]
     try:
         run_command(cmd)
