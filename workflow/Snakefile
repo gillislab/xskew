@@ -40,6 +40,11 @@ rule all:
         end1 = expand(wdir +  "/{sample}_1.fastq", sample=SAMPLE ),
         end2 = expand(wdir +  "/{sample}_2.fastq", sample=SAMPLE ),
         
+        # from genome generation
+        gdict = genomedir + "/genome.dict",
+        gfai = genomedir + "/genome.fai",
+        gpar = genomedir + "/genomeParameters.txt",
+        
         # from STAR
         abam = expand(wdir + "/{sample}.Aligned.out.bam", sample=SAMPLE ),
         
@@ -72,6 +77,43 @@ rule all:
         # from igvtools
         wwig =   expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE )
 
+
+rule build_genome_idx:
+    """
+        STAR --runThreadN 16 
+             --runMode genomeGenerate 
+             --genomeDir ~/data/cross_mammal_xci/genomes/Homo_sapiens
+             --genomeFastaFiles ~/data/cross_mammal_xci/genomes/Homo_sapiens/genome.fa
+             --sjdbGTFfile ~/data/cross_mammal_xci/genomes/Homo_sapiens/annotation.gtf  
+            [ --sjdOverhang 100 ]
+        
+        samtools faidx genome.fa
+        samtools dict genome.fa -o genome.dict
+        
+        
+    """    
+    input:
+        gfa = genomedir + "/genome.fa",
+        gtf = genomedir + "/annotation.gtf"
+    output:
+        gdict = genomedir + "/genome.dict",
+        gfai = genomedir + "/genome.fai",
+        gpar = genomedir + "/genomeParameters.txt",
+    
+    params:
+        gdir= genomedir,
+    
+    resources:
+        mem_mb=2048
+    threads: 24
+    
+    run:
+        star_genome(params.gdir, input.gfa, nthreads=f"{threads}", )
+        samtools_faidx(input.gfa)
+        samtools_dict(input.gfa)
+
+
+
 rule dump_fastq:
     input:
         sra = datadir + "/{sample}.sra"
@@ -92,7 +134,11 @@ rule dump_fastq:
 rule star_nowasp:
     input:
         end1= wdir + "/{sample}_1.fastq",   
-        end2= wdir + "/{sample}_2.fastq"
+        end2= wdir + "/{sample}_2.fastq",
+        gdict = genomedir + "/genome.dict",
+        gfai = genomedir + "/genome.fai",
+        gpar = genomedir + "/genomeParameters.txt",
+        
     output:     
         abam= wdir + "/{sample}.Aligned.out.bam",
         rpg= wdir + "/{sample}.ReadsPerGene.out.tab",
@@ -162,6 +208,9 @@ rule gatk1:
     input:
         xbam= wdir + "/{sample}."+ chr +".bam",    
         xfiltbam= wdir + "/{sample}."+ chr +".filt.bam",
+        gdict = genomedir + "/genome.dict",
+        gfai = genomedir + "/genome.fai",
+        gpar = genomedir + "/genomeParameters.txt",
     output:
         rgbam = wdir + "/{sample}." + chr + ".rg.bam",
         ddbam = wdir + "/{sample}." + chr + ".dedupped.bam",
@@ -201,6 +250,10 @@ rule star_wasp:
         end1= wdir + "/{sample}_1.fastq",   
         end2= wdir + "/{sample}_2.fastq",
         sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
+        gdict = genomedir + "/genome.dict",
+        gfai = genomedir + "/genome.fai",
+        gpar = genomedir + "/genomeParameters.txt",
+        
     output:     
         wabam= wdir + "/{sample}.wasp.Aligned.out.bam",
         wrpg= wdir + "/{sample}.wasp.ReadsPerGene.out.tab",
@@ -272,6 +325,10 @@ rule gatk2:
     input:
         wxbam= wdir + "/{sample}.wasp."+ chr +".bam",    
         wxfiltbam= wdir + "/{sample}.wasp."+ chr +".filt.bam",
+        gdict = genomedir + "/genome.dict",
+        gfai = genomedir + "/genome.fai",
+        gpar = genomedir + "/genomeParameters.txt",
+        
     output:
         wrgbam = wdir + "/{sample}.wasp." + chr + ".rg.bam",
         wddbam = wdir + "/{sample}.wasp." + chr + ".dedupped.bam",

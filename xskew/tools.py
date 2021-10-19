@@ -126,8 +126,27 @@ def fasterq_dump(infile, outdir, nthreads, tempdir ):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
-
+        raise    
+    
 #def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
+
+def star_genome(genomedir, nthreads, gtffile, infile ) 
+    cmd = ['STAR',
+           '--runMode', 'genomeGenerate',
+           '--runThreadN', nthreads,
+           '--genomeDir', genomedir,
+           '--sjdbGTFfile', gtffile, 
+           '--sjdbOverhang','100''
+           '--genomeFastaFiles', infile  
+       ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {end1}/{end2} input files.')
+        logging.error(traceback.format_exc(None))
+        raise    
+
+
 
 def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
             
@@ -177,13 +196,36 @@ def star_wasp(end1, end2, vcf, outprefix, nthreads, genomedir):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {end1}/{end2} input files.')
         logging.error(traceback.format_exc(None))
+        raise    
     finally:
         for ext in STARSUBDIRS:
             dirpath = f'{outprefix}{ext}'
             if os.path.exists(dirpath) and os.path.isdir(dirpath):
                 shutil.rmtree(dirpath)
-  
 
+
+def samtools_faidx(infile):
+    cmd = ['samtools',
+           'faidx',
+           infile
+       ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {infile}')
+        logging.error(traceback.format_exc(None))
+        raise            
+        
+def samtools_dict(input.gfa):
+    cmd = ['samtools',
+           'dict',
+       ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {infile}')
+        logging.error(traceback.format_exc(None))    
+        raise    
 
 def samtools_sort(infile, outfile, memory, nthreads):
     cmd = ['samtools',
@@ -199,7 +241,7 @@ def samtools_sort(infile, outfile, memory, nthreads):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
-
+        raise    
 
 def samtools_index(infile, nthreads):
     cmd = ['samtools',
@@ -212,6 +254,8 @@ def samtools_index(infile, nthreads):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
+        raise    
+
 
 def samtools_view_region(infile, outfile, region):
     cmd = ['samtools',
@@ -225,7 +269,7 @@ def samtools_view_region(infile, outfile, region):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))    
-    
+        raise        
     
 def samtools_view_quality(infile, outfile, quality, tag=None):
     cmd = ['samtools',
@@ -243,6 +287,8 @@ def samtools_view_quality(infile, outfile, quality, tag=None):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))        
+        raise    
+
 
 def gatk_arrg(infile, outfile):
     " gatk AddOrReplaceReadGroups -I={input.xfiltbam} -O={params.chrom}.rg.bam -SO=coordinate "
@@ -263,7 +309,7 @@ def gatk_arrg(infile, outfile):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))    
-
+        raise    
 
 def gatk_md(infile, outfile, metrics):
     " gatk MarkDuplicates -I={params.chrom}.rg.bam -O={params.chrom}.dedupped.bam -CREATE_INDEX=true " 
@@ -282,6 +328,7 @@ def gatk_md(infile, outfile, metrics):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
+        raise    
 
 def gatk_sncr(infile, outfile, genome ):
     " gatk SplitNCigarReads -R {params.gdir}/GRCh38.p7.genome.fa -I {params.chrom}.dedupped.bam " 
@@ -297,7 +344,7 @@ def gatk_sncr(infile, outfile, genome ):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))           
-        
+        raise    
     
 def gatk_htc(infile, outfile, genome, interval):
     " gatk HaplotypeCaller -R {params.gdir}/GRCh38.p7.genome.fa -L chr{params.chrom} " 
@@ -317,6 +364,7 @@ def gatk_htc(infile, outfile, genome, interval):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
+        raise    
 
 
 def gatk_sv(infile, outfile, genome, interval):
@@ -335,7 +383,8 @@ def gatk_sv(infile, outfile, genome, interval):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
-
+        raise    
+    
 
 def gatk_vf(infile, outfile, genome, interval):
     '''
@@ -370,7 +419,9 @@ def gatk_vf(infile, outfile, genome, interval):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
-
+        raise    
+    
+    
 def igvtools_count(infile, outfile):
     " igvtools count -z 0 -w 1 --bases --strands read {input.sfbam} " 
     " mv -v tmp.{wildcards.sample}.wig {output.splitwig}  && "
@@ -390,4 +441,7 @@ def igvtools_count(infile, outfile):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))         
-              
+        raise    
+    
+    
+                  
