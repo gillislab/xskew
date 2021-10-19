@@ -1,11 +1,43 @@
+#
+#  Conda versions as of 2021-10-19
+#  conda list:
+#  python               3.9.7           hb7a2778_1_cpython    conda-forge
+#  star                      2.7.9a               h9ee0642_0    bioconda
+#  samtools                  1.13                 h8c37831_0    bioconda
+#  openjdk                   8.0.302              h7f98852_0    conda-forge
+#  gatk4                     4.2.2.0              hdfd78af_1    bioconda
+#  bedtools                  2.30.0               h7d7f7ad_2    bioconda
+#  igvtools                  2.5.3                hdfd78af_1    bioconda
 # 
+#
+#  command line query:
+#  python -V            Python 3.9.7
+#  sra-toolkit          2.11.0
+#
+#  STAR --version       2.7.9a
+#
+#  samtools --version   samtools 1.13
+#                       Using htslib 1.13
+#
+#  java -version        openjdk version "1.8.0_302"
+#
+#  gatk -version        The Genome Analysis Toolkit (GATK) v4.2.2.0
+#                       HTSJDK Version: 2.24.1
+#                       Picard Version: 2.25.4
+#
+#  bedtools --version   bedtools v2.30.0
+#
+#  igvtools version     IGV Version 2.5.3 05/29/2019 10:59 AM
+#                       Using bundled JDK
+#
+#  $CONDA_PREFIX/share/igvtools-2.5.3-1/jdk-11/bin/java -version
+#                       openjdk version "11.0.2" 2019-01-15   
+#
+
 conda create -n xskew
 conda activate xskew
-#conda install -c conda-forge -c bioconda snakemake
-#conda install -c bioconda star gatk samtools bamtools sra-tools=2.11.0
 
-
-conda install -c conda-forge -c bioconda python snakemake=6.8.0 star gatk4 samtools bamtools sra-tools=2.11.0 igvtools openjdk
+conda install -c conda-forge -c bioconda python snakemake=6.8.0 star gatk4 samtools bamtools bedtools igvtools openjdk
 
 # Move jdk-11 to igvtoolsdir so launch script notices it as local JDK
 #  vs. JDK8 which is used for gatk4 
