@@ -103,7 +103,7 @@ rule star_nowasp:
     params:        
         tmpdir = wdir + "/{sample}_starout",
         wdir = wdir + "/",
-        gdir= homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/",
+        gdir= genomedir,
         outprefix = wdir + "/{sample}."     
     resources:
         mem_mb=3072
@@ -174,7 +174,7 @@ rule gatk1:
     params:
         chrom = chr,
         wdir = wdir + "/",
-        genome = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/GRCh38.p7.genome.fa",
+        genome = genomedir + "/genome.fa",
         interval = f"chr{chr}",    
     resources:
         #mem_mb=46080
@@ -212,7 +212,7 @@ rule star_wasp:
     params:        
         tmpdir = wdir + "/{sample}_starout",
         wdir = wdir + "/",
-        gdir= homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/",
+        genome = genomedir + "/genome.fa",
         outprefix = wdir + "/{sample}.wasp."
     resources:
         mem_mb=3072
@@ -284,7 +284,7 @@ rule gatk2:
     params:
         chrom = chr,
         wdir = wdir + "/",
-        genome = homedir + "data/genomes/GRCh38_Gencode25.2.4.9a/GRCh38.p7.genome.fa",
+        genome = genomedir + "/genome.fa",
         interval = f"chr{chr}"    
     resources:
         #mem_mb=46080
