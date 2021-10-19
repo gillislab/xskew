@@ -130,13 +130,13 @@ def fasterq_dump(infile, outdir, nthreads, tempdir ):
     
 #def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
 
-def star_genome(genomedir, nthreads, gtffile, infile ) 
+def star_genome(genomedir, nthreads, gtffile, infile ): 
     cmd = ['STAR',
            '--runMode', 'genomeGenerate',
            '--runThreadN', nthreads,
            '--genomeDir', genomedir,
            '--sjdbGTFfile', gtffile, 
-           '--sjdbOverhang','100''
+           '--sjdbOverhang','100',
            '--genomeFastaFiles', infile  
        ]
     try:
@@ -145,7 +145,6 @@ def star_genome(genomedir, nthreads, gtffile, infile )
         logging.error(f'problem with {end1}/{end2} input files.')
         logging.error(traceback.format_exc(None))
         raise    
-
 
 
 def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
@@ -216,9 +215,11 @@ def samtools_faidx(infile):
         logging.error(traceback.format_exc(None))
         raise            
         
-def samtools_dict(input.gfa):
+def samtools_dict(infile):
     cmd = ['samtools',
            'dict',
+           infile, 
+           outfile
        ]
     try:
         run_command(cmd)

@@ -108,9 +108,13 @@ rule build_genome_idx:
     threads: 24
     
     run:
-        star_genome(params.gdir, input.gfa, nthreads=f"{threads}", )
+    genomedir, nthreads, gtffile, infile ): 
+        star_genome(genomedir=params.gdir, 
+                    nthreads=f"{threads}", 
+                    gtffile=input.gtf, 
+                    infile=input.gfa )
         samtools_faidx(input.gfa)
-        samtools_dict(input.gfa)
+        samtools_dict(input.gfa, output.gdict)
 
 
 
