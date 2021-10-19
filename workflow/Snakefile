@@ -108,7 +108,6 @@ rule build_genome_idx:
     threads: 24
     
     run:
-    genomedir, nthreads, gtffile, infile ): 
         star_genome(genomedir=params.gdir, 
                     nthreads=f"{threads}", 
                     gtffile=input.gtf, 

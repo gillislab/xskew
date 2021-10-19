@@ -206,7 +206,7 @@ def star_wasp(end1, end2, vcf, outprefix, nthreads, genomedir):
 def samtools_faidx(infile):
     cmd = ['samtools',
            'faidx',
-           '-o', outfile
+           '-o', outfile,
            infile, 
        ]
     try:
@@ -219,7 +219,7 @@ def samtools_faidx(infile):
 def samtools_dict(infile, outfile):
     cmd = ['samtools',
            'dict',
-           '-o', outfile
+           '-o', outfile, 
            infile, 
        ]
     try:
