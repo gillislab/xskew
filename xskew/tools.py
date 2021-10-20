@@ -203,7 +203,7 @@ def star_wasp(end1, end2, vcf, outprefix, nthreads, genomedir):
                 shutil.rmtree(dirpath)
 
 
-def samtools_faidx(infile):
+def samtools_faidx(infile, outfile):
     cmd = ['samtools',
            'faidx',
            '-o', outfile,
