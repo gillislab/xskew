@@ -230,12 +230,12 @@ rule gatk1:
         svcf =  wdir + "/{sample}." + chr + ".snps.vcf",
         sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
 
-
     params:
         chrom = chr,
         wdir = wdir + "/",
         genome = genomedir + "/genome.fa",
         interval = f"chr{chr}",    
+
     resources:
         #mem_mb=46080
         mem_mb= 5760

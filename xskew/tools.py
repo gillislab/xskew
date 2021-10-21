@@ -87,7 +87,8 @@ def run_command_shell(cmd):
         logging.info(f'successfully ran {cmdstr}')
         return(cp.stderr, cp.stdout,cp.returncode)
     else:
-        logging.warn(f'non-zero return code for cmd {cmdstr}')
+        logging.error(f'non-zero return code for cmd {cmdstr}')
+        raise NonZeroReturnException(f'For cmd {cmdstr}')
 
 def list_sample(infile):
     """
@@ -311,7 +312,7 @@ def gatk_arrg(infile, outfile):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))    
-        raise    
+        raise
 
 def gatk_md(infile, outfile, metrics):
     " gatk MarkDuplicates -I={params.chrom}.rg.bam -O={params.chrom}.dedupped.bam -CREATE_INDEX=true " 
