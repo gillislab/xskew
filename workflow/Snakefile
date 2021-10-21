@@ -97,7 +97,7 @@ rule build_genome_idx:
         gtf = genomedir + "/annotation.gtf"
     output:
         gdict = genomedir + "/genome.dict",
-        gfai = genomedir + "/genome.fai",
+        gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
     
     params:
@@ -141,7 +141,7 @@ rule star_nowasp:
         end1= wdir + "/{sample}_1.fastq",   
         end2= wdir + "/{sample}_2.fastq",
         gdict = genomedir + "/genome.dict",
-        gfai = genomedir + "/genome.fai",
+        gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
         
     output:     
@@ -214,7 +214,7 @@ rule gatk1:
         xbam= wdir + "/{sample}."+ chr +".bam",    
         xfiltbam= wdir + "/{sample}."+ chr +".filt.bam",
         gdict = genomedir + "/genome.dict",
-        gfai = genomedir + "/genome.fai",
+        gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
         
     output:
