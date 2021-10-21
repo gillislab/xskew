@@ -216,14 +216,20 @@ rule gatk1:
         gdict = genomedir + "/genome.dict",
         gfai = genomedir + "/genome.fai",
         gpar = genomedir + "/genomeParameters.txt",
+        
     output:
         rgbam = wdir + "/{sample}." + chr + ".rg.bam",
+        
         ddbam = wdir + "/{sample}." + chr + ".dedupped.bam",
+        ddbai = wdir + "/{sample}." + chr + ".dedupped.bai",
+        metrics = wdir + "/{sample}." + chr + ".output.metrics",
+        
         sfbam = wdir + "/{sample}." + chr + ".split.filtered.bam",
+        sfbai = wdir + "/{sample}." + chr + ".split.filtered.bai",
         xfvcf = wdir + "/{sample}." + chr + ".filtered.vcf",
         svcf =  wdir + "/{sample}." + chr + ".snps.vcf",
         sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
-        metrics = wdir + "/{sample}." + chr + ".output.metrics",
+
 
     params:
         chrom = chr,
@@ -337,7 +343,9 @@ rule gatk2:
     output:
         wrgbam = wdir + "/{sample}.wasp." + chr + ".rg.bam",
         wddbam = wdir + "/{sample}.wasp." + chr + ".dedupped.bam",
+        wddbai = wdir + "/{sample}.wasp." + chr + ".dedupped.bai",
         wsfbam = wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",
+        wsfbai = wdir + "/{sample}.wasp." + chr + ".split.filtered.bai",
         wxfvcf = wdir + "/{sample}.wasp." + chr + ".filtered.vcf",
         wsvcf = wdir + "/{sample}.wasp." + chr + ".snps.vcf",
         wsfvcf = wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf",
