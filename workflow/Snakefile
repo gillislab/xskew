@@ -42,7 +42,7 @@ rule all:
         
         # from genome generation
         gdict = genomedir + "/genome.dict",
-        gfai = genomedir + "/genome.fai",
+        gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
         
         # from STAR
