@@ -337,7 +337,7 @@ rule gatk2:
         wxbam= wdir + "/{sample}.wasp."+ chr +".bam",    
         wxfiltbam= wdir + "/{sample}.wasp."+ chr +".filt.bam",
         gdict = genomedir + "/genome.dict",
-        gfai = genomedir + "/genome.fai",
+        gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
         
     output:
