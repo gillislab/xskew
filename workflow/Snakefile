@@ -262,7 +262,7 @@ rule star_wasp:
         end2= wdir + "/{sample}_2.fastq",
         sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
         gdict = genomedir + "/genome.dict",
-        gfai = genomedir + "/genome.fai",
+        gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
         
     output:     
