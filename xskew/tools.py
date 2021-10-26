@@ -4,7 +4,7 @@ import os
 import shutil
 import subprocess
 import sys
-
+import traceback
 
 STARSUBDIRS = ['_STARgenome', '_STARpass1','_STARtmp' ]
 
