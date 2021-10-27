@@ -94,8 +94,9 @@ rule build_genome_idx:
     """    
     input:
         gfa = genomedir + "/genome.fa",
-        gtf = genomedir + "/annotation.gtf"
+        gtf = genomedir + "/annotation.gtf",
         arpt = genomedir + "/assembly_report.txt"
+        
     output:
         gdict = genomedir + "/genome.dict",
         gfai = genomedir + "/genome.fa.fai",
