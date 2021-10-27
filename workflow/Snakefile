@@ -44,6 +44,7 @@ rule all:
         gdict = genomedir + "/genome.dict",
         gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
+        xreg = genomedir + "/chrXlabel.txt",
         
         # from STAR
         abam = expand(wdir + "/{sample}.Aligned.out.bam", sample=SAMPLE ),
