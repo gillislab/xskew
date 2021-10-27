@@ -121,7 +121,7 @@ rule build_genome_idx:
         samtools_dict(infile=input.gfa, 
                       outfile=output.gdict)
         make_chr_label(reportfile=input.arpt,
-                       outfile=output.xreg.
+                       outfile=output.xreg,
                        chr=params.chrnum)
 
 
