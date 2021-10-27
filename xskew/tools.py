@@ -153,7 +153,11 @@ def make_chr_label(reportfile, outfile, chr='X' ):
     """
     reads NCBI assembly report and extracts selected scaffold/assembly label. 
     """
-    colnames = ['Sequence-Name','Sequence-Role','Assigned-Molecule','Assigned-Molecule-Location/Type','GenBank-Accn','Relationship','RefSeq-Accn','Assembly-Unit','Sequence-Length','UCSC-style-name']   
+    colnames = ['Sequence-Name','Sequence-Role','Assigned-Molecule',
+                'Assigned-Molecule-Location/Type','GenBank-Accn',
+                'Relationship','RefSeq-Accn','Assembly-Unit',
+                'Sequence-Length','UCSC-style-name']   
+    df.columns = colnames
     df = pd.read_csv(reportfile, comment="#", sep='\t')
     tagval = f'chr{chr}'
     label = df[ df['UCSC-style-name'] == tagval]['RefSeq-Accn'].values[0]
