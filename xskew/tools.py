@@ -1,6 +1,7 @@
 import datetime as dt
 import logging
 import os
+import pandas as pd
 import shutil
 import subprocess
 import sys
@@ -146,6 +147,22 @@ def star_genome(genomedir, nthreads, gtffile, infile ):
         logging.error(f'problem with {end1}/{end2} input files.')
         logging.error(traceback.format_exc(None))
         raise    
+
+
+def make_chr_label(report_file, outfile, chr='X' ):
+    """
+    reads NCBI assembly report and extracts selected scaffold/assembly label. 
+    """
+    colnames = ['Sequence-Name','Sequence-Role','Assigned-Molecule','Assigned-Molecule-Location/Type','GenBank-Accn','Relationship','RefSeq-Accn','Assembly-Unit','Sequence-Length','UCSC-style-name']   
+    df = pd.read_csv(report_file, comment="#", sep='\t')
+    tagval = f'chr{chr}'
+    label = df[ df['UCSC-style-name'] == tagval]['RefSeq-Accn'].values[0]
+    logging.debug(f'extracted label {label} for {tagval} in {report_file}')
+    f = open(outfile, 'w')
+    f.write(f'{label}\n')
+    f.close()
+    
+    
 
 
 def star_nowasp(end1, end2, outprefix, nthreads, genomedir):

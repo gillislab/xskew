@@ -95,13 +95,16 @@ rule build_genome_idx:
     input:
         gfa = genomedir + "/genome.fa",
         gtf = genomedir + "/annotation.gtf"
+        arpt = genomedir + "/assembly_report.txt"
     output:
         gdict = genomedir + "/genome.dict",
         gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
+        xreg = genomedir + ""
     
     params:
         gdir= genomedir,
+        chrnum=f"{chr}",
     
     resources:
         mem_mb=2048
@@ -116,6 +119,9 @@ rule build_genome_idx:
                        outfile=output.gfai)
         samtools_dict(infile=input.gfa, 
                       outfile=output.gdict)
+        make_chr_label(reportfile=input.arpt,
+                       outfile=output.xreg.
+                       chr=params.chrnum)
 
 
 
