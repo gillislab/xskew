@@ -161,7 +161,7 @@ def make_chr_label(reportfile, outfile, chr='X' ):
     df.columns = colnames
     tagval = f'chr{chr}'
     label = df[ df['UCSC-style-name'] == tagval]['RefSeq-Accn'].values[0]
-    logging.debug(f'extracted label {label} for {tagval} in {report_file}')
+    logging.debug(f'extracted label {label} for {tagval} in {reportfile}')
     f = open(outfile, 'w')
     f.write(f'{label}\n')
     f.close()
