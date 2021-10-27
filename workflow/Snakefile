@@ -101,7 +101,7 @@ rule build_genome_idx:
         gdict = genomedir + "/genome.dict",
         gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
-        xreg = genomedir + "xlabel.txt"
+        xreg = genomedir + "/chrXlabel.txt"
     
     params:
         gdir= genomedir,
