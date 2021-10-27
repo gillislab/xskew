@@ -283,7 +283,7 @@ rule star_wasp:
     params:        
         tmpdir = wdir + "/{sample}_starout",
         wdir = wdir + "/",
-        genome = genomedir + "/genome.fa",
+        gdir = genomedir + "/genome.fa",
         outprefix = wdir + "/{sample}.wasp."
     resources:
         mem_mb=3072
