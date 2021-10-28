@@ -452,9 +452,14 @@ def gatk_vf(infile, outfile, genome, interval):
         raise    
     
     
-def igvtools_count(infile, outfile):
-    " igvtools count -z 0 -w 1 --bases --strands read {input.sfbam} " 
-    " mv -v tmp.{wildcards.sample}.wig {output.splitwig}  && "
+def igvtools_count(infile, outfile, gen_id='hg38' ):
+    """
+    
+    http://software.broadinstitute.org/software/igv/genome_ids
+    
+    igvtools count -z 0 -w 1 --bases --strands read {input.sfbam} 
+    mv -v tmp.{wildcards.sample}.wig {output.splitwig}
+    """
     cmd = [ 'igvtools',
             'count',
             '-z','0',
@@ -464,7 +469,7 @@ def igvtools_count(infile, outfile):
             'read',
             infile,
             outfile,
-            'hg38' 
+            gen_id
             ]
     try:
         run_command(cmd)
