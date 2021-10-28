@@ -16,7 +16,7 @@ genomedir = os.path.expanduser(f'~/data/cross_mammal_xci/genomes/{species}')
 datadir = os.path.expanduser(f'~/data/cross_mammal_xci/temp/sra/{species}')
 homedir = os.path.expanduser("~/")
 wdir = f"{homedir}work/xskew1"
-chr="X"
+chr="chrX"
 
 
 from xskew.tools import *
@@ -44,7 +44,7 @@ rule all:
         gdict = genomedir + "/genome.dict",
         gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
-        xreg = genomedir + "/chrXlabel.txt",
+        xreg = genomedir + "/" + chr + "label.txt",
         
         # from STAR
         abam = expand(wdir + "/{sample}.Aligned.out.bam", sample=SAMPLE ),
@@ -102,11 +102,11 @@ rule build_genome_idx:
         gdict = genomedir + "/genome.dict",
         gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
-        xreg = genomedir + "/chrXlabel.txt"
+        xreg = genomedir + "/" + chr + "label.txt",
     
     params:
         gdir= genomedir,
-        chrnum=f"{chr}",
+        chr=chr,
     
     resources:
         mem_mb=2048
@@ -123,8 +123,7 @@ rule build_genome_idx:
                       outfile=output.gdict)
         make_chr_label(reportfile=input.arpt,
                        outfile=output.xreg,
-                       chr=params.chrnum)
-
+                       chr=params.chr)
 
 
 rule dump_fastq:
@@ -202,7 +201,8 @@ rule samtools2:
         xbam= wdir + "/{sample}."+ chr +".bam",    
         xfiltbam= wdir + "/{sample}."+ chr +".filt.bam"    
     params:
-        region=f"chr{chr}",
+        #region=f"{chr}",
+        region = get_chr_label(genomedir, chr),
         qual = 10,
     resources:
         mem_mb=3072  
@@ -242,8 +242,9 @@ rule gatk1:
         chrom = chr,
         wdir = wdir + "/",
         genome = genomedir + "/genome.fa",
-        interval = f"chr{chr}",    
-
+        #interval = f"chr{chr}",    
+        interval = get_chr_label(genomedir, chr),
+        
     resources:
         #mem_mb=46080
         mem_mb= 5760
@@ -324,7 +325,8 @@ rule samtools4:
         wxbam= wdir + "/{sample}.wasp."+ chr +".bam",    
         wxfiltbam= wdir + "/{sample}.wasp."+ chr +".filt.bam"    
     params:
-        region=f"chr{chr}",
+        #region=f"chr{chr}",
+        region = get_chr_label(genomedir, chr),
         qual = 10,
         tag = 'vW:1'
     resources:
@@ -363,7 +365,7 @@ rule gatk2:
         chrom = chr,
         wdir = wdir + "/",
         genome = genomedir + "/genome.fa",
-        interval = f"chr{chr}"    
+        interval = get_chr_label(genomedir, chr),    
     resources:
         #mem_mb=46080
         mem_mb= 5760
@@ -395,11 +397,7 @@ rule igvtools7:
     resources:
         mem_mb=12288
     threads: 1
-    
-    params:
-        wdir = wdir + "/",
-        chrom=chr,      
-      
+        
     run:
         igvtools_count(input.wsfbam, output.wwig)      
       

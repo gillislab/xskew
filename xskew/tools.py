@@ -149,7 +149,7 @@ def star_genome(genomedir, nthreads, gtffile, infile ):
         raise    
 
 
-def make_chr_label(reportfile, outfile, chr='X' ):
+def make_chr_label(reportfile, outfile, chr='chrX' ):
     """
     reads NCBI assembly report and extracts selected scaffold/assembly label. 
     """
@@ -159,14 +159,20 @@ def make_chr_label(reportfile, outfile, chr='X' ):
                 'Sequence-Length','UCSC-style-name']   
     df = pd.read_csv(reportfile, comment="#", sep='\t')
     df.columns = colnames
-    tagval = f'chr{chr}'
+    tagval = f'{chr}'
     label = df[ df['UCSC-style-name'] == tagval]['RefSeq-Accn'].values[0]
     logging.debug(f'extracted label {label} for {tagval} in {reportfile}')
     f = open(outfile, 'w')
     f.write(f'{label}\n')
     f.close()
-    
-    
+
+def get_chr_label(genomedir, chr='chrX'):
+    labelfile = f"{genomedir}/{chr}label.txt"
+    f = open(labelfile, 'r')
+    label = f.read().strip()
+    logging.debug(f"retrieved label {label} for {chr} in {labelfile}")
+    return label
+  
 
 
 def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
