@@ -51,8 +51,8 @@ rule all:
         
         # from SAMTOOLS 
         sbam = expand(wdir + "/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLE ),
-        xbam = expand(wdir + "/{sample}.X.bam", sample=SAMPLE ),
-        xfiltbam = expand(wdir + "/{sample}.X.filt.bam", sample=SAMPLE ),
+        xbam = expand(wdir + "/{sample}." + chr + ".bam", sample=SAMPLE ),
+        xfiltbam = expand(wdir + "/{sample}." + chr + ".filt.bam", sample=SAMPLE ),
 
         # from gatk
         rgbam = expand(wdir + "/{sample}." + chr + ".rg.bam", sample=SAMPLE),
