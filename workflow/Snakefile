@@ -53,7 +53,7 @@ rule all:
         gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
         xreg = genomedir + "/" + chr + "label.txt",
-        xind = genomedir + "/" + chr + ".fa",
+        regfa = genomedir + "/" + chr + ".fa",
         
         # from STAR
         abam = expand(wdir + "/{sample}.Aligned.out.bam", sample=SAMPLE ),
@@ -112,7 +112,7 @@ rule build_genome_idx:
         gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
         xreg = genomedir + "/" + chr + "label.txt",
-        xind = genomedir + "/" + chr + ".fa"
+        regfa = genomedir + "/" + chr + ".fa"
     
     params:
         gdir= genomedir,
@@ -137,7 +137,7 @@ rule build_genome_idx:
         make_chr_index( infile=input.gfa,
                         genomedir = params.gdir, 
                         chr = params.chr, 
-                        outfile = output.xind)
+                        outfile = output.regfa)
 
 
 rule dump_fastq:
@@ -404,7 +404,8 @@ rule gatk2:
 rule igvtools7:    
     input:
         wsfbam= wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",
-
+        regfa = genomedir + "/" + chr + ".fa"
+        
     output:
         wwig= wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", 
     
@@ -417,9 +418,9 @@ rule igvtools7:
     threads: 1
         
     run:
-        igvtools_count(input.wsfbam, 
-                       output.wwig, 
-                       gen_id=params.genid)      
+        igvtools_count(infile=input.wsfbam, 
+                       outfile=output.wwig, 
+                       reg_fa=input.regfa)      
       
       
       

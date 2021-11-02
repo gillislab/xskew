@@ -470,7 +470,7 @@ def gatk_vf(infile, outfile, genome, interval):
         raise    
     
     
-def igvtools_count(infile, outfile, gen_id='hg38' ):
+def igvtools_count(infile, outfile, reg_fa):
     """
     
     http://software.broadinstitute.org/software/igv/genome_ids
@@ -487,7 +487,7 @@ def igvtools_count(infile, outfile, gen_id='hg38' ):
             'read',
             infile,
             outfile,
-            gen_id
+            reg_fa
             ]
     try:
         run_command(cmd)
