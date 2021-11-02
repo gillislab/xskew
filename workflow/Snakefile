@@ -408,11 +408,7 @@ rule igvtools7:
         
     output:
         wwig= wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", 
-    
-    params:
-        genid = gen_id
-    
-        
+            
     resources:
         mem_mb=12288
     threads: 1
