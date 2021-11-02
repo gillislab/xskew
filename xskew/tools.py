@@ -172,7 +172,10 @@ def get_chr_label(genomedir, chr='chrX'):
     label = f.read().strip()
     logging.debug(f"retrieved label {label} for {chr} in {labelfile}")
     return label
-  
+
+def make_chr_index(infile, genomedir, chr, outfile):
+    region = get_chr_label(genomedir, chr)
+    samtools_faidx_region(infile, outfile, region)  
 
 
 def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
@@ -243,6 +246,21 @@ def samtools_faidx(infile, outfile):
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
         raise            
+
+def samtools_faidx_region(infile, outfile, region):
+    cmd = ['samtools',
+           'faidx',
+           '-o', outfile,
+           infile,
+           region 
+       ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {infile}')
+        logging.error(traceback.format_exc(None))
+        raise   
+
         
 def samtools_dict(infile, outfile):
     cmd = ['samtools',

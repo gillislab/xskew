@@ -11,17 +11,14 @@ import logging
 gitpath=os.path.expanduser("~/git/xskew")
 sys.path.append(gitpath)
 
-GENIDS = { 'Homo_sapiens' : 'hg38',
-           'Sus_scrofa'   : 'susScrofa',
-           'Rattus_norvegicus' : 'm4',
-            'Bos_taurus'  :  'bosTau4'
-    }
-
-
-
+#GENIDS = { 'Homo_sapiens' : 'hg38',
+#           'Sus_scrofa'   : 'susScrofa',
+#           'Rattus_norvegicus' : 'm4',
+#            'Bos_taurus'  :  'btaurus_3.0'
+#    }
 
 species='Homo_sapiens'
-gen_id=GENIDS[species]
+#gen_id=GENIDS[species]
 
 genomedir = os.path.expanduser(f'~/data/cross_mammal_xci/genomes/{species}')
 datadir = os.path.expanduser(f'~/data/cross_mammal_xci/temp/sra/{species}')
@@ -56,6 +53,7 @@ rule all:
         gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
         xreg = genomedir + "/" + chr + "label.txt",
+        xind = genomedir + "/" + chr + ".fa"
         
         # from STAR
         abam = expand(wdir + "/{sample}.Aligned.out.bam", sample=SAMPLE ),
@@ -114,6 +112,7 @@ rule build_genome_idx:
         gfai = genomedir + "/genome.fa.fai",
         gpar = genomedir + "/genomeParameters.txt",
         xreg = genomedir + "/" + chr + "label.txt",
+        xind = genomedir + "/" + chr + ".fa"
     
     params:
         gdir= genomedir,
@@ -135,6 +134,10 @@ rule build_genome_idx:
         make_chr_label(reportfile=input.arpt,
                        outfile=output.xreg,
                        chr=params.chr)
+        make_chr_index( infile=input.gfa,
+                        genomedir = params.gdir, 
+                        chr = params.chr, 
+                        outfile = output.xind)
 
 
 rule dump_fastq:
