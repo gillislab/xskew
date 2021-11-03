@@ -29,7 +29,7 @@ logging.debug('in snakefile...')
 
 (SAMPLE,) = glob_wildcards(datadir + "/{sample}.sra")
 
-logging.debug(f"HOME={homedir} WORKDIR={wdir} CHR={chr}")
+logging.debug(f"HOME={homedir} WORKDIR={wdir} CHR={chr} GENOMEDIR={genomedir}")
 logging.debug(f"SAMPLE={SAMPLE}")
 
 # Needed to avoid matching anything past the '.', e.g. XYZ.wasp.<sufficx> 
