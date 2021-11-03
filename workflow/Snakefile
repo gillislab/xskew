@@ -139,6 +139,7 @@ rule make_chr_label:
         regfa = genomedir + "/" + chr + ".fa"
 
     params:
+        gdir= genomedir,
         chr = chr,
 
     run:
