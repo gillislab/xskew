@@ -159,8 +159,11 @@ def make_chr_label(reportfile, outfile, chr='chrX' ):
                 'Sequence-Length','UCSC-style-name']   
     df = pd.read_csv(reportfile, comment="#", sep='\t')
     df.columns = colnames
-    tagval = f'{chr}'
-    label = df[ df['UCSC-style-name'] == tagval]['RefSeq-Accn'].values[0]
+    #tagval = f'{chr}'
+    #label = df[ df['UCSC-style-name'] == tagval]['RefSeq-Accn'].values[0]
+    chrnum = chr[3:]
+    tagvel = chrnum
+    label = df[ df['Sequence-Name'] == tagval]['RefSeq-Accn'].values[0]
     logging.debug(f'extracted label {label} for {tagval} in {reportfile}')
     f = open(outfile, 'w')
     f.write(f'{label}\n')
