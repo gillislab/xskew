@@ -173,6 +173,13 @@ def get_chr_label(genomedir, chr='chrX'):
     logging.debug(f"retrieved label {label} for {chr} in {labelfile}")
     return label
 
+def get_label(regionfile):
+    f = open(regionfile, 'r')
+    label = f.read().strip()
+    logging.debug(f"retrieved label {label} for {chr} in {regionfile}")
+    return label
+
+
 def make_chr_index(infile, genomedir, chr, outfile):
     region = get_chr_label(genomedir, chr)
     samtools_faidx_region(infile, outfile, region)  
@@ -247,7 +254,8 @@ def samtools_faidx(infile, outfile):
         logging.error(traceback.format_exc(None))
         raise            
 
-def samtools_faidx_region(infile, outfile, region):
+def samtools_faidx_region(infile, outfile, regionfile):
+    region = get_label(regionfile)
     cmd = ['samtools',
            'faidx',
            '-o', outfile,
@@ -305,7 +313,8 @@ def samtools_index(infile, nthreads):
         raise    
 
 
-def samtools_view_region(infile, outfile, region):
+def samtools_view_region(infile, outfile, regionfile):
+    region = get_label(regionfile)
     cmd = ['samtools',
            'view',
            '-b', infile,
@@ -394,10 +403,12 @@ def gatk_sncr(infile, outfile, genome ):
         logging.error(traceback.format_exc(None))           
         raise    
     
-def gatk_htc(infile, outfile, genome, interval):
+def gatk_htc(infile, outfile, genome, regionfile):
     " gatk HaplotypeCaller -R {params.gdir}/GRCh38.p7.genome.fa -L chr{params.chrom} " 
     " -I {params.chrom}.split.filtered.bam --dont-use-soft-clipped-bases -stand-call-conf 0.0 "
     " -O {params.chrom}.filtered.vcf && "    
+    interval = get_label(regionfile)
+    
     cmd = [ 'gatk',
            'HaplotypeCaller',
            '-L', interval, 
@@ -415,9 +426,10 @@ def gatk_htc(infile, outfile, genome, interval):
         raise    
 
 
-def gatk_sv(infile, outfile, genome, interval):
+def gatk_sv(infile, outfile, genome, regionfile):
     " gatk SelectVariants -R {params.gdir}/GRCh38.p7.genome.fa -L chr{params.chrom} "
     "-V {params.chrom}.filtered.vcf -O {params.chrom}.snps.vcf -select-type SNP &&"
+    interval = get_label(regionfile)
     cmd = [ 'gatk', 
             'SelectVariants',
             '-L', interval,             
@@ -434,7 +446,7 @@ def gatk_sv(infile, outfile, genome, interval):
         raise    
     
 
-def gatk_vf(infile, outfile, genome, interval):
+def gatk_vf(infile, outfile, genome, regionfile):
     '''
       maybe subprocess.run(" ".join(cmd), shell=True)
     
@@ -448,6 +460,8 @@ def gatk_vf(infile, outfile, genome, interval):
     ' -filter "MQ < 40.0" --filter-name "MQ40" '
     ' -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" '
     ' -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" && '
+    interval = get_label(regionfile)
+    
     cmd = [ 'gatk', 
            'VariantFiltration',
             '-R', genome,
