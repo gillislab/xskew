@@ -3,7 +3,6 @@
 # Data in /data/johlee/cross_mammal_xci/temp/sra
 # #  snakemake --jobs 20 --cluster "qsub -N xskew1 -pe threads {threads} -wd ~/work/xskew1 -l m_mem_free={resources.mem_mb}M 
 
-
 import os
 import sys
 import logging
@@ -11,14 +10,10 @@ import logging
 gitpath=os.path.expanduser("~/git/xskew")
 sys.path.append(gitpath)
 
-#GENIDS = { 'Homo_sapiens' : 'hg38',
-#           'Sus_scrofa'   : 'susScrofa',
-#           'Rattus_norvegicus' : 'm4',
-#            'Bos_taurus'  :  'btaurus_3.0'
-#    }
+#species='Homo_sapiens'
+configfile: "workflow/config.yaml"
 
-species='Homo_sapiens'
-#gen_id=GENIDS[species]
+species = config["species"]
 
 genomedir = os.path.expanduser(f'~/data/cross_mammal_xci/genomes/{species}')
 datadir = os.path.expanduser(f'~/data/cross_mammal_xci/temp/sra/{species}')
