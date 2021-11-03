@@ -138,6 +138,9 @@ rule make_chr_label:
         xreg = genomedir + "/" + chr + "label.txt",
         regfa = genomedir + "/" + chr + ".fa"
 
+    params:
+        chr = chr,
+
     run:
         make_chr_label(reportfile=input.arpt,
                        outfile=output.xreg,
