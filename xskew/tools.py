@@ -257,8 +257,7 @@ def samtools_faidx(infile, outfile):
         logging.error(traceback.format_exc(None))
         raise            
 
-def samtools_faidx_region(infile, outfile, regionfile):
-    region = get_label(regionfile)
+def samtools_faidx_region(infile, outfile, region):
     cmd = ['samtools',
            'faidx',
            '-o', outfile,
