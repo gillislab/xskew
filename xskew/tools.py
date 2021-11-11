@@ -102,10 +102,11 @@ def list_sample(infile):
     filename= os.path.basename(infile)
     dirname=os.path.dirname(infile)
     sampleid= filename.split('.')[0]
+    logging.debug(f'listing {dirname}')
     dirlist = os.listdir(dirname)
     for x in dirlist:
         if x.startswith(sampleid):
-            st = os.stat(x)
+            st = os.stat(f'{dirname}/{x}')
             filesize = st.st_size
             listing += f"{x}\t{filesize}\n"
     logging.debug(f"directory listing for sample {sampleid}:\n{listing}")
