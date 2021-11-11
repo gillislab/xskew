@@ -18,13 +18,12 @@ sys.path.append(gitpath)
 configfile: "workflow/config.yaml"
 
 species = config["species"]
+chr = config["chr"]
 
 genomedir = os.path.expanduser(f'~/data/cross_mammal_xci/genomes/{species}')
 datadir = os.path.expanduser(f'~/data/cross_mammal_xci/temp/sra/{species}')
 homedir = os.path.expanduser("~/")
-wdir = f"{homedir}work/xskew1"
-chr="chrX"
-
+wdir = f"{homedir}work/xskew1/{species}"
 
 from xskew.tools import *
 setup_logging(logging.DEBUG)
