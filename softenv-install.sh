@@ -47,3 +47,12 @@ cd ~/src
 wget https://data.broadinstitute.org/igv/projects/downloads/2.5/IGV_Linux_2.5.3.zip
 unzip IGV_Linux_2.5.3.zip 
 mv IGV_Linux_2.5.3/jdk-11 $CONDA_PREFIX/share/igvtools-2.5.3-1/ 
+
+
+# #download sratoolkit, link binaries within conda environment
+# linux/centos
+cd  $CONDA_PREFIX
+wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.0/sratoolkit.2.11.0-centos_linux64.tar.gz
+tar -xvzf sratoolkit.2.11.0-centos_linux64.tar.gz
+cd bin
+ln -s ../sratoolkit.2.11.0-centos_linux64/bin/* ./
