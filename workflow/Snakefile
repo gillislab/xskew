@@ -61,7 +61,7 @@ rule all:
         
         # from genome processing
         xreg = genomedir + "/" + chr + "label.txt",
-        yreg = genomedir + "/chrYlabel.txt",
+        #yreg = genomedir + "/chrYlabel.txt",
         regfa = genomedir + "/" + chr + ".fa",
         
         # from STAR
