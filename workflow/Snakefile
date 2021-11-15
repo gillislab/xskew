@@ -19,6 +19,9 @@ configfile: "workflow/config.yaml"
 
 species = config["species"]
 chr = config["chr"]
+num_workers = 1
+worker_idx = 0
+
 
 genomedir = os.path.expanduser(f'~/data/cross_mammal_xci/genomes/{species}')
 datadir = os.path.expanduser(f'~/data/cross_mammal_xci/temp/sra/{species}')
@@ -26,13 +29,18 @@ homedir = os.path.expanduser("~/")
 wdir = f"{homedir}work/xskew1/{species}"
 
 from xskew.tools import *
+
 setup_logging(logging.DEBUG)
 
 logging.debug('in snakefile...')
 
-(SAMPLE,) = glob_wildcards(datadir + "/{sample}.sra")
-
 logging.debug(f"HOME={homedir} WORKDIR={wdir} CHR={chr} GENOMEDIR={genomedir}")
+logging.debug(f"NUM_WORKERS={num_workers} WORKER_IDX={worker_idx}")
+
+# Collect samples and optionally filter across hosts.
+(SAMPLE,) = glob_wildcards(datadir + "/{sample}.sra")
+logging.debug(f'Initial sampl number = {len(SAMPLE)}. Filtering...')
+SAMPLE = modulo_filter(SAMPLE, num_workers, worker_idx)
 logging.debug(f"SAMPLE={SAMPLE}")
 
 # Needed to avoid matching anything past the '.', e.g. XYZ.wasp.<sufficx> 
@@ -120,7 +128,7 @@ rule build_genome_idx:
     
     resources:
         mem_mb=2048
-    threads: 24
+    threads: 16
     
     run:
         star_genome(genomedir=params.gdir, 
@@ -216,7 +224,7 @@ rule samtools1:
         sbai = wdir + "/{sample}.Aligned.sortedByCoord.out.bam.bai"
     resources:
         mem_mb=3072
-    threads: 20
+    threads: 16
     
     run:
         samtools_sort(infile=input.abam, 
@@ -344,7 +352,7 @@ rule samtools3:
         wsbai = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai"
     resources:
         mem_mb=3072
-    threads: 20
+    threads: 16
     run:
         samtools_sort(infile=input.wabam, 
                       outfile=output.wsbam, 

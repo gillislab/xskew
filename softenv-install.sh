@@ -33,6 +33,8 @@
 #  $CONDA_PREFIX/share/igvtools-2.5.3-1/jdk-11/bin/java -version
 #                       openjdk version "11.0.2" 2019-01-15   
 #
+#   Install miniconda
+#  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
 conda create -n xskew
 conda activate xskew
