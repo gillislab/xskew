@@ -39,7 +39,7 @@ logging.debug(f"NUM_WORKERS={num_workers} WORKER_IDX={worker_idx}")
 
 # Collect samples and optionally filter across hosts.
 (SAMPLE,) = glob_wildcards(datadir + "/{sample}.sra")
-logging.debug(f'Initial sampl number = {len(SAMPLE)}. Filtering...')
+logging.debug(f'Initial sample number = {len(SAMPLE)}. Filtering...')
 SAMPLE = modulo_filter(SAMPLE, num_workers, worker_idx)
 logging.debug(f"SAMPLE={SAMPLE}")
 
