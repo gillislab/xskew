@@ -44,14 +44,14 @@ wildcard_constraints:
 
 rule all:
     input:
-        gdict = genomedir + "/genome.dict",
-        gfai = genomedir + "/genome.fa.fai",
-        gpar = genomedir + "/genomeParameters.txt",
+        #gdict = genomedir + "/genome.dict",
+        #gfai = genomedir + "/genome.fa.fai",
+        #gpar = genomedir + "/genomeParameters.txt",
         
         # from genome processing
-        xreg = genomedir + "/" + chr + "label.txt",
+        #xreg = genomedir + "/" + chr + "label.txt",
         #yreg = genomedir + "/chrYlabel.txt",
-        regfa = genomedir + "/" + chr + ".fa",
+        #regfa = genomedir + "/" + chr + ".fa",
          
         # testing. 
         #end1 = expand(wdir +  "/{sample}_1.fastq", sample=SAMPLE ),
@@ -61,24 +61,24 @@ rule all:
         #abam = expand(wdir + "/{sample}.Aligned.out.bam", sample=SAMPLE ),
         # from SAMTOOLS1
         #sbam = expand(wdir + "/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLE ),
-        sbam = expand(wdir + "/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLE ),  
-        xbam = expand(wdir + "/{sample}." + chr + ".bam", sample=SAMPLE ),
-        xfiltbam = expand(wdir + "/{sample}." + chr + ".filt.bam", sample=SAMPLE ),
+        #sbam = expand(wdir + "/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLE ),  
+        #xbam = expand(wdir + "/{sample}." + chr + ".bam", sample=SAMPLE ),
+        #xfiltbam = expand(wdir + "/{sample}." + chr + ".filt.bam", sample=SAMPLE ),
 
         # from GATK1
-        rgbam = expand(wdir + "/{sample}." + chr + ".rg.bam", sample=SAMPLE),
-        sfbam = expand(wdir + "/{sample}." + chr + ".split.filtered.bam", sample=SAMPLE),
-        svcf =  expand(wdir + "/{sample}." + chr + ".snps.vcf", sample=SAMPLE), 
-        xfvcf = expand(wdir + "/{sample}." + chr + ".filtered.vcf", sample=SAMPLE),
+        #rgbam = expand(wdir + "/{sample}." + chr + ".rg.bam", sample=SAMPLE),
+        #sfbam = expand(wdir + "/{sample}." + chr + ".split.filtered.bam", sample=SAMPLE),
+        #svcf =  expand(wdir + "/{sample}." + chr + ".snps.vcf", sample=SAMPLE), 
+        #xfvcf = expand(wdir + "/{sample}." + chr + ".filtered.vcf", sample=SAMPLE),
         sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
-        ddbam = expand(wdir + "/{sample}." + chr + ".dedupped.bam", sample=SAMPLE), 
-        metrics = expand(wdir + "/{sample}." + chr + ".output.metrics", sample=SAMPLE),
+        #ddbam = expand(wdir + "/{sample}." + chr + ".dedupped.bam", sample=SAMPLE), 
+        #metrics = expand(wdir + "/{sample}." + chr + ".output.metrics", sample=SAMPLE),
         
         # from STAR wasp
         #wabam= expand(wdir + "/{sample}.wasp.Aligned.out.bam",  sample=SAMPLE), 
-        wlog = expand(wdir + "/{sample}.wasp.Log.out", sample=SAMPLE ),        
-        wflog= expand(wdir +"/{sample}.wasp.Log.final.out", sample=SAMPLE),
-        wrpg=  expand(wdir +"/{sample}.wasp.ReadsPerGene.out.tab",    sample=SAMPLE),        
+        #wlog = expand(wdir + "/{sample}.wasp.Log.out", sample=SAMPLE ),        
+        #wflog= expand(wdir +"/{sample}.wasp.Log.final.out", sample=SAMPLE),
+        #wrpg=  expand(wdir +"/{sample}.wasp.ReadsPerGene.out.tab",    sample=SAMPLE),        
 
         # from SAMTOOLS2
 
@@ -87,12 +87,12 @@ rule all:
         #wxfiltbam = expand(wdir + "/{sample}.wasp." + chr + ".filt.bam", sample=SAMPLE ),
 
         # from GATK2
-        wrgbam = expand(wdir + "/{sample}.wasp." + chr + ".rg.bam", sample=SAMPLE), 
+        #wrgbam = expand(wdir + "/{sample}.wasp." + chr + ".rg.bam", sample=SAMPLE), 
         wsfbam = expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",  sample=SAMPLE), 
-        wsvcf =  expand(wdir + "/{sample}.wasp." + chr + ".snps.vcf", sample=SAMPLE), 
-        wxfvcf = expand(wdir + "/{sample}.wasp." + chr + ".filtered.vcf", sample=SAMPLE), 
+        #wsvcf =  expand(wdir + "/{sample}.wasp." + chr + ".snps.vcf", sample=SAMPLE), 
+        #wxfvcf = expand(wdir + "/{sample}.wasp." + chr + ".filtered.vcf", sample=SAMPLE), 
         wsfvcf = expand(wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf", sample=SAMPLE), 
-        wddbam = expand(wdir + "/{sample}.wasp." + chr + ".dedupped.bam", sample=SAMPLE), 
+        #wddbam = expand(wdir + "/{sample}.wasp." + chr + ".dedupped.bam", sample=SAMPLE), 
         wmetrics = expand(wdir + "/{sample}.wasp." + chr + ".output.metrics", sample=SAMPLE), 
 
         # from igvtools
@@ -177,8 +177,8 @@ rule dump_fastq:
     input:
         sra = datadir + "/{sample}.sra"
     output:
-        end1= wdir + "/{sample}_1.fastq",    
-        end2= wdir + "/{sample}_2.fastq"    
+        end1= temp(wdir + "/{sample}_1.fastq"),    
+        end2= temp(wdir + "/{sample}_2.fastq")    
     resources:
         mem_mb=2048
     threads: 6
@@ -227,8 +227,8 @@ rule samtools1:
     input:
         abam = wdir + "/{sample}.Aligned.out.bam"    
     output:
-        sbam = wdir + "/{sample}.Aligned.sortedByCoord.out.bam",
-        sbai = wdir + "/{sample}.Aligned.sortedByCoord.out.bam.bai"
+        sbam = temp(wdir + "/{sample}.Aligned.sortedByCoord.out.bam"),
+        sbai = temp(wdir + "/{sample}.Aligned.sortedByCoord.out.bam.bai")
     resources:
         mem_mb=3072
     threads: 16
@@ -358,8 +358,8 @@ rule samtools3:
     input:         
         wabam = wdir + "/{sample}.wasp.Aligned.out.bam"    
     output:        
-        wsbam = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam",
-        wsbai = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai"
+        wsbam = temp(wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam"),
+        wsbai = temp(wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai")
     resources:
         mem_mb=3072
     threads: 16
