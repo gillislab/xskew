@@ -188,7 +188,7 @@ rule dump_fastq:
         fasterq_dump( infile=input.sra, 
                       outdir=wdir, 
                       nthreads=f"{threads}", 
-                      tempdir ="./")
+                      tempdir =wdir)
         
         
 rule star_nowasp:
