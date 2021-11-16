@@ -44,6 +44,8 @@ wildcard_constraints:
 
 rule all:
     input:
+        expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE )
+
         #gdict = genomedir + "/genome.dict",
         #gfai = genomedir + "/genome.fa.fai",
         #gpar = genomedir + "/genomeParameters.txt",
@@ -97,7 +99,7 @@ rule all:
 
         # from igvtools
         #wwig = expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE ),
-        expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE )
+        
 
 
 rule build_genome_idx:
