@@ -51,19 +51,9 @@ wildcard_constraints:
 rule all:
     input:
         # testing. 
-        #end1 = expand(wdir +  "/{sample}_1.fastq", sample=SAMPLE ),
-        #end2 = expand(wdir +  "/{sample}_2.fastq", sample=SAMPLE ),
-        
-        # from genome generation
-        gdict = genomedir + "/genome.dict",
-        gfai = genomedir + "/genome.fa.fai",
-        gpar = genomedir + "/genomeParameters.txt",
-        
-        # from genome processing
-        xreg = genomedir + "/" + chr + "label.txt",
-        #yreg = genomedir + "/chrYlabel.txt",
-        regfa = genomedir + "/" + chr + ".fa",
-        
+        end1 = expand(wdir +  "/{sample}_1.fastq", sample=SAMPLE ),
+        end2 = expand(wdir +  "/{sample}_2.fastq", sample=SAMPLE ),   
+       
         # from STAR
         abam = expand(wdir + "/{sample}.Aligned.out.bam", sample=SAMPLE ),
         
@@ -94,7 +84,17 @@ rule all:
         wmetrics = expand(wdir + "/{sample}.wasp." + chr + ".output.metrics", sample=SAMPLE), 
 
         # from igvtools
-        wwig =   expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE )
+        wwig =   expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE ),
+
+        # from genome generation
+        gdict = genomedir + "/genome.dict",
+        gfai = genomedir + "/genome.fa.fai",
+        gpar = genomedir + "/genomeParameters.txt",
+        
+        # from genome processing
+        xreg = genomedir + "/" + chr + "label.txt",
+        yreg = genomedir + "/chrYlabel.txt",
+        regfa = genomedir + "/" + chr + ".fa",
 
 
 rule build_genome_idx:
