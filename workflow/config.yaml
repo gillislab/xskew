@@ -1,3 +1,4 @@
+keep-going: True
 species: "Homo_sapiens"
 chr: "chrX"
 num_workers: 1
