@@ -70,7 +70,7 @@ rule all:
         #sfbam = expand(wdir + "/{sample}." + chr + ".split.filtered.bam", sample=SAMPLE),
         #svcf =  expand(wdir + "/{sample}." + chr + ".snps.vcf", sample=SAMPLE), 
         #xfvcf = expand(wdir + "/{sample}." + chr + ".filtered.vcf", sample=SAMPLE),
-        sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
+        # sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
         #ddbam = expand(wdir + "/{sample}." + chr + ".dedupped.bam", sample=SAMPLE), 
         #metrics = expand(wdir + "/{sample}." + chr + ".output.metrics", sample=SAMPLE),
         
@@ -88,17 +88,16 @@ rule all:
 
         # from GATK2
         #wrgbam = expand(wdir + "/{sample}.wasp." + chr + ".rg.bam", sample=SAMPLE), 
-        wsfbam = expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",  sample=SAMPLE), 
+        #wsfbam = expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",  sample=SAMPLE), 
         #wsvcf =  expand(wdir + "/{sample}.wasp." + chr + ".snps.vcf", sample=SAMPLE), 
         #wxfvcf = expand(wdir + "/{sample}.wasp." + chr + ".filtered.vcf", sample=SAMPLE), 
-        wsfvcf = expand(wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf", sample=SAMPLE), 
+        #wsfvcf = expand(wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf", sample=SAMPLE), 
         #wddbam = expand(wdir + "/{sample}.wasp." + chr + ".dedupped.bam", sample=SAMPLE), 
-        wmetrics = expand(wdir + "/{sample}.wasp." + chr + ".output.metrics", sample=SAMPLE), 
+        #wmetrics = expand(wdir + "/{sample}.wasp." + chr + ".output.metrics", sample=SAMPLE), 
 
         # from igvtools
-        wwig = expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE ),
-
-
+        #wwig = expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE ),
+        expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE )
 
 
 rule build_genome_idx:
