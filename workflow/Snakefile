@@ -4,8 +4,11 @@
 # #  snakemake --jobs 20 --cluster "qsub -N xskew1 -pe threads {threads} -wd ~/work/xskew1 -l m_mem_free={resources.mem_mb}M 
 #
 # Interactive invocation:
-#  time snakemake -c16 --rerun-incomplete --keep-going  --config species=Bos_taurus num_workers=2 worker_idx=1 > log.7.txt 2>&1
+#  time snakemake -c16 --keep-going  --config species=Bos_taurus num_workers=2 worker_idx=1 > log.7.txt 2>&1
 #
+#
+#
+
 import os
 import sys
 import logging
@@ -44,8 +47,7 @@ wildcard_constraints:
 
 rule all:
     input:
-
-        expand(wdir + "/{sample}." + chr + ".split.filtered.wig", sample=SAMPLE )
+        expand(wdir + "/{sample}." + chr + ".split.filtered.wig", sample=SAMPLE ),
         expand(wdir + "/{sample}.wasp." + chr + ".snps.vcf", sample=SAMPLE), 
         expand(wdir + "/{sample}.wasp." + chr + ".filtered.vcf", sample=SAMPLE), 
         expand(wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf", sample=SAMPLE),         
