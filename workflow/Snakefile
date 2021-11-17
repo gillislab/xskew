@@ -44,8 +44,22 @@ wildcard_constraints:
 
 rule all:
     input:
-        expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE )
 
+        expand(wdir + "/{sample}." + chr + ".split.filtered.wig", sample=SAMPLE )
+        expand(wdir + "/{sample}.wasp." + chr + ".snps.vcf", sample=SAMPLE), 
+        expand(wdir + "/{sample}.wasp." + chr + ".filtered.vcf", sample=SAMPLE), 
+        expand(wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf", sample=SAMPLE),         
+        expand(wdir + "/{sample}." + chr + ".split.filtered.wig", sample=SAMPLE),          
+        expand(wdir + "/{sample}.wasp.SJ.out.tab", sample=SAMPLE),
+        expand(wdir + "/{sample}.wasp.Log.out", sample=SAMPLE),  
+        expand(wdir + "/{sample}.wasp.Log.final.out", sample=SAMPLE),
+        expand(wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam", sample=SAMPLE),
+        expand(wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai", sample=SAMPLE),
+        expand(wdir + "/{sample}.wasp." + chr + ".filtered.vcf", sample=SAMPLE),
+        expand(wdir + "/{sample}.wasp." + chr + ".snps.vcf", sample=SAMPLE),
+        expand(wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf", sample=SAMPLE),
+        expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE ),        
+        # FROM GENOME SETUP
         #gdict = genomedir + "/genome.dict",
         #gfai = genomedir + "/genome.fa.fai",
         #gpar = genomedir + "/genomeParameters.txt",
@@ -75,6 +89,9 @@ rule all:
         # sfvcf = expand(wdir + "/{sample}." + chr + ".snps_filtered.vcf",  sample=SAMPLE ),
         #ddbam = expand(wdir + "/{sample}." + chr + ".dedupped.bam", sample=SAMPLE), 
         #metrics = expand(wdir + "/{sample}." + chr + ".output.metrics", sample=SAMPLE),
+
+        # from igvtools6
+        #sfwig = expand(wdir + "/{sample}." + chr + ".split.filtered.wig", sample=SAMPLE ),
         
         # from STAR wasp
         #wabam= expand(wdir + "/{sample}.wasp.Aligned.out.bam",  sample=SAMPLE), 
@@ -97,7 +114,7 @@ rule all:
         #wddbam = expand(wdir + "/{sample}.wasp." + chr + ".dedupped.bam", sample=SAMPLE), 
         #wmetrics = expand(wdir + "/{sample}.wasp." + chr + ".output.metrics", sample=SAMPLE), 
 
-        # from igvtools
+        # from igvtools7
         #wwig = expand(wdir + "/{sample}.wasp." + chr + ".split.filtered.wig", sample=SAMPLE ),
         
 
@@ -201,12 +218,13 @@ rule star_nowasp:
         gpar = genomedir + "/genomeParameters.txt",
         
     output:     
-        abam= wdir + "/{sample}.Aligned.out.bam",
-        rpg= wdir + "/{sample}.ReadsPerGene.out.tab",
-        sjtab= wdir + "/{sample}.SJ.out.tab",
-        log= wdir + "/{sample}.Log.out",        
-        plog= wdir + "/{sample}.Log.progress.out",
-        flog= wdir + "/{sample}.Log.final.out",
+        abam=  temp(wdir + "/{sample}.Aligned.out.bam"),
+        rpg=   temp(wdir + "/{sample}.ReadsPerGene.out.tab"),
+        sjtab= temp(wdir + "/{sample}.SJ.out.tab"),
+        log=   temp(wdir + "/{sample}.Log.out"),        
+        plog=  temp(wdir + "/{sample}.Log.progress.out"),
+        flog=  temp(wdir + "/{sample}.Log.final.out"),
+
     params:        
         tmpdir = wdir + "/{sample}_starout",
         wdir = wdir + "/",
@@ -251,8 +269,9 @@ rule samtools2:
         xreg = genomedir + "/" + chr + "label.txt",
             
     output:
-        xbam= wdir + "/{sample}."+ chr +".bam",    
-        xfiltbam= wdir + "/{sample}."+ chr +".filt.bam"    
+        xbam=      temp(wdir + "/{sample}."+ chr +".bam"),    
+        xfiltbam=  temp(wdir + "/{sample}."+ chr +".filt.bam")
+            
     params:
         #region=f"{chr}",
         #region = get_chr_label(genomedir, chr),
@@ -280,14 +299,13 @@ rule gatk1:
         xreg = genomedir + "/" + chr + "label.txt",
         
     output:
-        rgbam = wdir + "/{sample}." + chr + ".rg.bam",
+        rgbam = temp(wdir + "/{sample}." + chr + ".rg.bam"),
+        ddbam = temp(wdir + "/{sample}." + chr + ".dedupped.bam"),
+        ddbai = temp(wdir + "/{sample}." + chr + ".dedupped.bai"),
+        metrics = temp(wdir + "/{sample}." + chr + ".output.metrics"),
+        sfbam = temp(wdir + "/{sample}." + chr + ".split.filtered.bam"),
+        sfbai = temp(wdir + "/{sample}." + chr + ".split.filtered.bai"),
         
-        ddbam = wdir + "/{sample}." + chr + ".dedupped.bam",
-        ddbai = wdir + "/{sample}." + chr + ".dedupped.bai",
-        metrics = wdir + "/{sample}." + chr + ".output.metrics",
-        
-        sfbam = wdir + "/{sample}." + chr + ".split.filtered.bam",
-        sfbai = wdir + "/{sample}." + chr + ".split.filtered.bai",
         xfvcf = wdir + "/{sample}." + chr + ".filtered.vcf",
         svcf =  wdir + "/{sample}." + chr + ".snps.vcf",
         sfvcf = wdir + "/{sample}." + chr + ".snps_filtered.vcf",
@@ -318,6 +336,26 @@ rule gatk1:
         gatk_vf(infile=output.svcf, outfile=output.sfvcf, genome=params.genome, regionfile=input.xreg )      
         list_sample(infile=input.xfiltbam)
 
+
+rule igvtools6:
+    priority: 52     
+    input:
+        sfbam= wdir + "/{sample}." + chr + ".split.filtered.bam",
+        regfa = genomedir + "/" + chr + ".fa"
+        
+    output:
+        sfwig= wdir + "/{sample}." + chr + ".split.filtered.wig", 
+            
+    resources:
+        mem_mb=12288
+    threads: 1
+        
+    run:
+        igvtools_count(infile=input.sfbam, 
+                       outfile=output.sfwig, 
+                       reg_fa=input.regfa)      
+
+
 rule star_wasp:
     priority: 35 
     input:
@@ -329,12 +367,12 @@ rule star_wasp:
         gpar = genomedir + "/genomeParameters.txt",
         
     output:     
-        wabam= wdir + "/{sample}.wasp.Aligned.out.bam",
-        wrpg= wdir + "/{sample}.wasp.ReadsPerGene.out.tab",
+        wabam=  temp(wdir + "/{sample}.wasp.Aligned.out.bam"),
+        wrpg=   wdir + "/{sample}.wasp.ReadsPerGene.out.tab",
         wsjtab= wdir + "/{sample}.wasp.SJ.out.tab",
-        wlog= wdir + "/{sample}.wasp.Log.out",        
-        wplog= wdir + "/{sample}.wasp.Log.progress.out",
-        wflog= wdir + "/{sample}.wasp.Log.final.out",
+        wlog=   wdir + "/{sample}.wasp.Log.out",        
+        wplog=  temp(wdir + "/{sample}.wasp.Log.progress.out"),
+        wflog=  wdir + "/{sample}.wasp.Log.final.out",
 
     params:        
         tmpdir = wdir + "/{sample}_starout",
@@ -359,8 +397,8 @@ rule samtools3:
     input:         
         wabam = wdir + "/{sample}.wasp.Aligned.out.bam"    
     output:        
-        wsbam = temp(wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam"),
-        wsbai = temp(wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai")
+        wsbam = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam"),
+        wsbai = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai")
     resources:
         mem_mb=3072
     threads: 16
@@ -379,8 +417,8 @@ rule samtools4:
         wsbai = wdir + "/{sample}.wasp.Aligned.sortedByCoord.out.bam.bai",
         xreg = genomedir + "/" + chr + "label.txt",    
     output:
-        wxbam= wdir + "/{sample}.wasp."+ chr +".bam",    
-        wxfiltbam= wdir + "/{sample}.wasp."+ chr +".filt.bam"    
+        wxbam= temp(wdir + "/{sample}.wasp."+ chr +".bam"),    
+        wxfiltbam= temp(wdir + "/{sample}.wasp."+ chr +".filt.bam")    
     params:
         qual = 10,
         tag = 'vW:1'
@@ -407,15 +445,16 @@ rule gatk2:
         xreg = genomedir + "/" + chr + "label.txt",
         
     output:
-        wrgbam = wdir + "/{sample}.wasp." + chr + ".rg.bam",
-        wddbam = wdir + "/{sample}.wasp." + chr + ".dedupped.bam",
-        wddbai = wdir + "/{sample}.wasp." + chr + ".dedupped.bai",
-        wsfbam = wdir + "/{sample}.wasp." + chr + ".split.filtered.bam",
-        wsfbai = wdir + "/{sample}.wasp." + chr + ".split.filtered.bai",
-        wxfvcf = wdir + "/{sample}.wasp." + chr + ".filtered.vcf",
-        wsvcf = wdir + "/{sample}.wasp." + chr + ".snps.vcf",
-        wsfvcf = wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf",
-        wmetrics = wdir + "/{sample}.wasp." + chr + ".output.metrics",
+        wrgbam =  temp(wdir + "/{sample}.wasp." + chr + ".rg.bam"),
+        wddbam =  temp(wdir + "/{sample}.wasp." + chr + ".dedupped.bam"),
+        wddbai =  temp(wdir + "/{sample}.wasp." + chr + ".dedupped.bai"),
+        wmetrics =temp(wdir + "/{sample}.wasp." + chr + ".output.metrics"),
+        wsfbam =  temp(wdir + "/{sample}.wasp." + chr + ".split.filtered.bam"),
+        wsfbai =  temp(wdir + "/{sample}.wasp." + chr + ".split.filtered.bai"),
+        wxfvcf =  wdir + "/{sample}.wasp." + chr + ".filtered.vcf",
+        wsvcf =   wdir + "/{sample}.wasp." + chr + ".snps.vcf",
+        wsfvcf =  wdir + "/{sample}.wasp." + chr + ".snps_filtered.vcf",
+
     
     params:
         chrom = chr,
@@ -460,8 +499,3 @@ rule igvtools7:
         igvtools_count(infile=input.wsfbam, 
                        outfile=output.wwig, 
                        reg_fa=input.regfa)      
-      
-      
-      
-      
-        
