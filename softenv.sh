@@ -1,4 +1,6 @@
-#
+#!/usr/bin/env -S bash -l
+set -e
+
 #  Conda versions as of 2021-10-19
 #  conda list:
 #  python               3.9.7           hb7a2778_1_cpython    conda-forge
@@ -36,10 +38,25 @@
 #   Install miniconda
 #  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
-conda create -n xskew
+# install conda
+if ! command -v conda&> /dev/null; then
+	echo "installing miniconda..."
+	wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
+	bash Miniconda3-py39_4.9.2-Linux-x86_64.sh -b
+	rm -f Miniconda3-py39_4.9.2-Linux-x86_64.sh
+	~/miniconda3/bin/conda init 
+	echo "miniconda installed. restart terminal."
+	exit 0
+else
+	echo "miniconda installed already."
+fi
+# be sure to restart terminal to allow conda to start
+
+conda create -y -n xskew
+sleep 2
 conda activate xskew
 
-conda install -c conda-forge -c bioconda python=3.9.7 snakemake=6.8.0 star gatk4 samtools bamtools bedtools igvtools openjdk
+conda install -y -c conda-forge -c bioconda python=3.9.7 snakemake=6.8.0 star gatk4 samtools bamtools bedtools igvtools openjdk
 
 # Move jdk-11 to igvtoolsdir so launch script notices it as local JDK
 #  vs. JDK8 which is used for gatk4 
@@ -56,3 +73,7 @@ wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.0/sratoolkit.2.11.0-centos_
 tar -xvzf sratoolkit.2.11.0-centos_linux64.tar.gz
 cd bin
 ln -s ../sratoolkit.2.11.0-centos_linux64/bin/* ./
+
+echo "done. xskew env installed. 'conda activate xskew' to enable..."
+
+
