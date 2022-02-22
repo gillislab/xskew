@@ -213,7 +213,7 @@ def make_chr_index(infile, genomedir, chr, outfile):
     samtools_faidx_region(infile, outfile, region)  
 
 
-def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
+def star_nowasp(end1, outprefix, nthreads, genomedir, end2=None):
     
     if end2 is None:
         end2 = ''
@@ -241,7 +241,7 @@ def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
                 shutil.rmtree(dirpath)    
 
 #def star_wasp(end1, end2, vcf, outprefix, outtemp, nthreads, genomedir):
-def star_wasp(end1, end2, vcf, outprefix, nthreads, genomedir):
+def star_wasp(end1, vcf, outprefix, nthreads, genomedir, end2=None):
     " STAR  --genomeDir {params.gdir} --readFilesIn {input.end1} {input.end2} "
     " --runThreadN {threads} --twopassMode Basic --twopass1readsN -1 " 
     " --outSAMtype BAM Unsorted --quantMode GeneCounts "
