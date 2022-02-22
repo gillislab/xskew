@@ -214,6 +214,9 @@ def make_chr_index(infile, genomedir, chr, outfile):
 
 
 def star_nowasp(end1, end2, outprefix, nthreads, genomedir):
+    
+    if end2 is None:
+        end2 = ''
             
     cmd = ['STAR',
        '--readFilesIn', end1, end2, 
@@ -243,6 +246,10 @@ def star_wasp(end1, end2, vcf, outprefix, nthreads, genomedir):
     " --runThreadN {threads} --twopassMode Basic --twopass1readsN -1 " 
     " --outSAMtype BAM Unsorted --quantMode GeneCounts "
     " --waspOutputMode SAMtag --varVCFfile {input.sfvcf} && "            
+    
+    if end2 is None:
+        end2 = ''
+    
     cmd = ['STAR',
        '--readFilesIn', end1, end2, 
        '--outFileNamePrefix', outprefix,
