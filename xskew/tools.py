@@ -163,7 +163,7 @@ def star_genome(genomedir, nthreads, gtffile, infile ):
            '--runThreadN', nthreads,
            '--genomeDir', genomedir,
            '--sjdbGTFfile', gtffile, 
-           '--sjdbOverhang','100',
+           #'--sjdbOverhang','100',
            '--genomeFastaFiles', infile  
        ]
     try:
@@ -178,21 +178,27 @@ def make_chr_label(reportfile, outfile, chr='chrX' ):
     """
     reads NCBI assembly report and extracts selected scaffold/assembly label. 
     """
-    colnames = ['Sequence-Name','Sequence-Role','Assigned-Molecule',
-                'Assigned-Molecule-Location/Type','GenBank-Accn',
-                'Relationship','RefSeq-Accn','Assembly-Unit',
-                'Sequence-Length','UCSC-style-name']   
-    df = pd.read_csv(reportfile, comment="#", sep='\t')
-    df.columns = colnames
-    #tagval = f'{chr}'
-    #label = df[ df['UCSC-style-name'] == tagval]['RefSeq-Accn'].values[0]
-    chrnum = chr[3:]
-    tagval = chrnum
-    label = df[ df['Assigned-Molecule'] == tagval]['RefSeq-Accn'].values[0]
-    logging.debug(f'extracted label {label} for {tagval} in {reportfile}')
+    if os.path.exists(reportfile):
+        colnames = ['Sequence-Name','Sequence-Role','Assigned-Molecule',
+                    'Assigned-Molecule-Location/Type','GenBank-Accn',
+                    'Relationship','RefSeq-Accn','Assembly-Unit',
+                    'Sequence-Length','UCSC-style-name']   
+        df = pd.read_csv(reportfile, comment="#", sep='\t')
+        df.columns = colnames
+        if chr.startswith('chr'):
+            chrnum = chr[3:]
+        else:
+            chrnum = chr
+        tagval = chrnum
+        label = df[ df['Assigned-Molecule'] == tagval]['RefSeq-Accn'].values[0]
+        logging.debug(f'extracted label {label} for {tagval} in {reportfile}')
+    else:
+        label = chr
+
     f = open(outfile, 'w')
     f.write(f'{label}\n')
     f.close()
+
 
 def get_chr_label(genomedir, chr='chrX'):
     labelfile = f"{genomedir}/{chr}label.txt"
