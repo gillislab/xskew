@@ -56,7 +56,11 @@ def prepare_genome_ensembl(genomefile, annotfile, outdir):
      
     '''
     logging.debug(f'creating symlinks')
+    if os.is_symlink(f'{outdir}/genome.fa'):
+        os.remove(f'{outdir}/genome.fa')
     os.symlink(genomefile, f'{outdir}/genome.fa')
+    if os.is_symlink(f'{outdir}/annotation.gtf'):
+        os.remove(f'{outdir}/annotation.gtf')
     os.symlink(annotfile, f'{outdir}/annotation.gtf')
 
     sfh = open(genomefile)
@@ -102,7 +106,11 @@ def parse_assembly_report(reportfile):
 
 def prepare_genome_refseq(genomefile, annotfile, reportfile, outdir):
     logging.debug(f'creating symlinks')
+    if os.is_symlink(f'{outdir}/genome.fa'):
+        os.remove(f'{outdir}/genome.fa')
     os.symlink(genomefile, f'{outdir}/genome.fa')
+    if os.is_symlink(f'{outdir}/annotation.gtf'):
+        os.remove(f'{outdir}/annotation.gtf')
     os.symlink(annotfile, f'{outdir}/annotation.gtf')
     
     tlist = parse_assembly_report(reportfile)
