@@ -125,7 +125,7 @@ def prepare_genome_refseq(genomefile, annotfile, reportfile, outdir):
                         genomedir = outdir, 
                         chr = chrlabel, 
                         outfile = f'{outdir}/{chrlabel}.fa')
-        logging.debug(f'handled chromsome {chrlabel}')
+        logging.debug(f'handled chromosome {chrlabel}')
         
     star_genome(outdir,"6" ,f'{outdir}/annotation.gtf',  f'{outdir}/genome.fa')
     samtools_dict(f'{outdir}/genome.fa',f'{outdir}/genome.dict')
