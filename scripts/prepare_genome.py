@@ -81,7 +81,7 @@ def prepare_genome_ensembl(genomefile, annotfile, outdir):
         logging.debug(f'handled chromsome {chrlabel}')
     
     star_genome(outdir, "6" ,f'{outdir}/annotation.gtf',  f'{outdir}/genome.fa')
-    
+    samtools_dict(f'{outdir}/genome.fa',f'{outdir}/genome.dict')
     
     logging.info(f'done.')
             
@@ -128,6 +128,9 @@ def prepare_genome_refseq(genomefile, annotfile, reportfile, outdir):
         logging.debug(f'handled chromsome {chrlabel}')
         
     star_genome(outdir,"6" ,f'{outdir}/annotation.gtf',  f'{outdir}/genome.fa')
+    samtools_dict(f'{outdir}/genome.fa',f'{outdir}/genome.dict')
+    logging.info(f'done.')
+
 
 def prepare_genome_genbank():
     pass
