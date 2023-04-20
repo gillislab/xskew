@@ -129,6 +129,7 @@ def prepare_genome_refseq(genomefile, annotfile, reportfile, outdir):
         
     star_genome(outdir,"6" ,f'{outdir}/annotation.gtf',  f'{outdir}/genome.fa')
     samtools_dict(f'{outdir}/genome.fa',f'{outdir}/genome.dict')
+    samtools_faidx(f'{outdir}/genome.fa',f'{outdir}/genome.fa.fai')
     logging.info(f'done.')
 
 
