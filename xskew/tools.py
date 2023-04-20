@@ -157,6 +157,19 @@ def fasterq_dump(infile, outdir, nthreads, tempdir ):
     
 #def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
 
+def parse_assembly_report(reportfile):
+    '''
+    parse genbank assembly report. 
+            Sequence-Name Sequence-Role Assigned-Molecule  Assigned-Molecule-Location/Type  
+            GenBank-Accn    Relationship    RefSeq-Accn    Assembly-Unit    Sequence-Length    
+            UCSC-style-name
+            
+     
+    
+    '''
+
+
+
 def star_genome(genomedir, nthreads, gtffile, infile ): 
     cmd = ['STAR',
            '--runMode', 'genomeGenerate',

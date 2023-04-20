@@ -56,7 +56,7 @@ conda create -y -n xskew
 sleep 2
 conda activate xskew
 
-conda install -y -c conda-forge -c bioconda python=3.9.7 snakemake=6.8.0 star gatk4 samtools bamtools bedtools igvtools openjdk
+conda install -y -c conda-forge -c bioconda biopython python=3.9.7 snakemake=6.8.0 star gatk4 samtools bamtools bedtools igvtools openjdk
 
 # Move jdk-11 to igvtoolsdir so launch script notices it as local JDK
 #  vs. JDK8 which is used for gatk4 
