@@ -147,9 +147,9 @@ def fasterq_dump(infile, outdir, nthreads, tempdir ):
         cp = run_command(cmd)
         logging.info(f'got rc={cp.returncode}')
         
-    except NonZeroReturnException as nzre:
-        logging.error(f'problem with {infile}')
-        logging.error(traceback.format_exc(None))
+    #except NonZeroReturnException as nzre:
+    #    logging.error(f'problem with {infile}')
+    #    logging.error(traceback.format_exc(None))
     except Exception as e:
         logging.error(traceback.format_exc(None))    
     
