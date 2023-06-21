@@ -7,6 +7,11 @@ import subprocess
 import sys
 import traceback
 
+gitpath = os.path.expanduser("~/git/cshlwork")
+sys.path.append(gitpath)
+
+from cshlwork.utils import *
+
 STARSUBDIRS = ['_STARgenome', '_STARpass1','_STARtmp' ]
 
 
@@ -54,61 +59,60 @@ def modulo_filter(inlist, divisor, remainder):
     return newlist
 
 
-def run_command(cmd):
-    """
-    cmd should be standard list of tokens...  ['cmd','arg1','arg2'] with cmd on shell PATH.
+#def run_command(cmd):
+#    """
+#    cmd should be standard list of tokens...  ['cmd','arg1','arg2'] with cmd on shell PATH.
+#    
+#    """
+#    cmdstr = " ".join(cmd)
+#    logging.info(f"running command: {cmdstr} ")
+#    start = dt.datetime.now()
+#    cp = subprocess.run(cmd, 
+#                    text=True, 
+#                    stdout=subprocess.PIPE, 
+#                    stderr=subprocess.STDOUT)
+#    end = dt.datetime.now()
+#    elapsed =  end - start
+#    logging.debug(f"ran cmd='{cmdstr}' return={cp.returncode} {elapsed.seconds} seconds.")
     
-    """
-    cmdstr = " ".join(cmd)
-    logging.info(f"running command: {cmdstr} ")
-    start = dt.datetime.now()
-    cp = subprocess.run(cmd, 
-                    text=True, 
-                    stdout=subprocess.PIPE, 
-                    stderr=subprocess.STDOUT)
-    end = dt.datetime.now()
-    elapsed =  end - start
-    logging.debug(f"ran cmd='{cmdstr}' return={cp.returncode} {elapsed.seconds} seconds.")
-    
-    if cp.stderr is not None:
-        logging.debug(f"got stderr: {cp.stderr}")
-    if cp.stdout is not None:
-        logging.debug(f"got stdout: {cp.stdout}")
-    if str(cp.returncode) == '0':
-        logging.info(f'got rc={cp.returncode} command= {cmdstr}')
-    else:
-        logging.warn(f'got rc={cp.returncode} command= {cmdstr}')
-    
-    return cp
+#    if cp.stderr is not None:
+#        logging.debug(f"got stderr: {cp.stderr}")
+#    if cp.stdout is not None:
+#        logging.debug(f"got stdout: {cp.stdout}")
+#    if str(cp.returncode) == '0':
+#        logging.info(f'got rc={cp.returncode} command= {cmdstr}')
+#    else:
+#        logging.warn(f'got rc={cp.returncode} command= {cmdstr}')
+#    return cp
 
-def run_command_shell(cmd):
-    """
-    maybe subprocess.run(" ".join(cmd), shell=True)
-    cmd should be standard list of tokens...  ['cmd','arg1','arg2'] with cmd on shell PATH.
-    
-    """
-    cmdstr = " ".join(cmd)
-    logging.info(f"running command: {cmdstr} ")
-    start = dt.datetime.now()
-    cp = subprocess.run(" ".join(cmd), 
-                    shell=True, 
-                    stdout=subprocess.PIPE, 
-                    stderr=subprocess.STDOUT)
-    end = dt.datetime.now()
-    elapsed =  end - start
-    logging.debug(f"ran cmd='{cmdstr}' return={cp.returncode} {elapsed.seconds} seconds.")
-    
-    if cp.stderr is not None:
-        logging.debug(f"got stderr: {cp.stderr}")
-    if cp.stdout is not None:
-        logging.debug(f"got stdout: {cp.stdout}")
-    
-    if str(cp.returncode) == '0':
-        logging.info(f'successfully ran {cmdstr}')
-        return cp
-    else:
-        logging.error(f'non-zero return code for cmd {cmdstr}')
-        raise NonZeroReturnException(f'For cmd {cmdstr}')
+#def run_command_shell(cmd):
+#    """
+#    maybe subprocess.run(" ".join(cmd), shell=True)
+#    cmd should be standard list of tokens...  ['cmd','arg1','arg2'] with cmd on shell PATH.
+#    
+#    """
+#    cmdstr = " ".join(cmd)
+#    logging.info(f"running command: {cmdstr} ")
+#    start = dt.datetime.now()
+#    cp = subprocess.run(" ".join(cmd), 
+#                    shell=True, 
+#                    stdout=subprocess.PIPE, 
+#                    stderr=subprocess.STDOUT)
+#    end = dt.datetime.now()
+#    elapsed =  end - start
+#    logging.debug(f"ran cmd='{cmdstr}' return={cp.returncode} {elapsed.seconds} seconds.")
+#    
+#    if cp.stderr is not None:
+#        logging.debug(f"got stderr: {cp.stderr}")
+#    if cp.stdout is not None:
+#        logging.debug(f"got stdout: {cp.stdout}")
+#    
+#    if str(cp.returncode) == '0':
+#        logging.info(f'successfully ran {cmdstr}')
+#        return cp
+#    else:
+#        logging.error(f'non-zero return code for cmd {cmdstr}')
+#        raise NonZeroReturnException(f'For cmd {cmdstr}')
 
 def list_sample(infile):
     """
