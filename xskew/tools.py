@@ -150,7 +150,8 @@ def fasterq_dump(infile, outdir, nthreads, tempdir ):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
-        raise    
+    except Exception as e:
+        logging.error(traceback.format_exc(None))    
     
 #def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
 
@@ -251,6 +252,8 @@ def star_nowasp(end1, outprefix, nthreads, genomedir, end2=None):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {end1}/{end2} input files.')
         logging.error(traceback.format_exc(None))
+    except Exception as e:
+        logging.error(traceback.format_exc(None))
     
     finally:
         for ext in STARSUBDIRS:
@@ -287,7 +290,10 @@ def star_wasp(end1, vcf, outprefix, nthreads, genomedir, end2=None):
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {end1}/{end2} input files.')
         logging.error(traceback.format_exc(None))
-        raise    
+    
+    except Exception as e:
+        logging.error(traceback.format_exc(None))   
+    
     finally:
         for ext in STARSUBDIRS:
             dirpath = f'{outprefix}{ext}'
