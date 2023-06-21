@@ -76,10 +76,10 @@ def run_command(cmd):
         logging.debug(f"got stdout: {cp.stdout}")
     if str(cp.returncode) == '0':
         logging.info(f'got rc={cp.returncode} command= {cmdstr}')
-        return cp
     else:
         logging.warn(f'got rc={cp.returncode} command= {cmdstr}')
-        return cp
+    
+    return cp
 
 def run_command_shell(cmd):
     """
