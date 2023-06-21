@@ -74,13 +74,12 @@ def run_command(cmd):
         logging.debug(f"got stderr: {cp.stderr}")
     if cp.stdout is not None:
         logging.debug(f"got stdout: {cp.stdout}")
-    
     if str(cp.returncode) == '0':
-        logging.info(f'successfully ran {cmdstr}')
-        return(cp.stderr, cp.stdout,cp.returncode)
+        logging.info(f'got rc={cp.returncode} command= {cmdstr}')
+        return cp
     else:
-        logging.warn(f'non-zero return code for cmd {cmdstr}')
-
+        logging.warn(f'got rc={cp.returncode} command= {cmdstr}')
+        return cp
 
 def run_command_shell(cmd):
     """
@@ -95,10 +94,6 @@ def run_command_shell(cmd):
                     shell=True, 
                     stdout=subprocess.PIPE, 
                     stderr=subprocess.STDOUT)
-    #cp = subprocess.run(cmd, 
-    #                shell=True, 
-    #                stdout=subprocess.PIPE, 
-    #                stderr=subprocess.STDOUT)
     end = dt.datetime.now()
     elapsed =  end - start
     logging.debug(f"ran cmd='{cmdstr}' return={cp.returncode} {elapsed.seconds} seconds.")
@@ -110,7 +105,7 @@ def run_command_shell(cmd):
     
     if str(cp.returncode) == '0':
         logging.info(f'successfully ran {cmdstr}')
-        return(cp.stderr, cp.stdout,cp.returncode)
+        return cp
     else:
         logging.error(f'non-zero return code for cmd {cmdstr}')
         raise NonZeroReturnException(f'For cmd {cmdstr}')
@@ -149,7 +144,9 @@ def fasterq_dump(infile, outdir, nthreads, tempdir ):
     '--log-level', 'debug', 
     infile]
     try:
-        run_command(cmd)
+        cp = run_command(cmd)
+        logging.info(f'got rc={cp.returncode}')
+        
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
@@ -249,10 +246,12 @@ def star_nowasp(end1, outprefix, nthreads, genomedir, end2=None):
        '--quantMode GeneCounts'
        ]
     try:
-        run_command(cmd)
+        cp = run_command(cmd)
+        logging.info(f'got rc={cp.returncode}')
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {end1}/{end2} input files.')
         logging.error(traceback.format_exc(None))
+    
     finally:
         for ext in STARSUBDIRS:
             dirpath = f'{outprefix}{ext}'
