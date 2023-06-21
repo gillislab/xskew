@@ -256,6 +256,7 @@ def star_nowasp(end1, outprefix, nthreads, genomedir, end2=None):
         for ext in STARSUBDIRS:
             dirpath = f'{outprefix}{ext}'
             if os.path.exists(dirpath) and os.path.isdir(dirpath):
+                logging.debug(f'removing temp STAR dir {dirpath} ...')
                 shutil.rmtree(dirpath)    
 
 #def star_wasp(end1, end2, vcf, outprefix, outtemp, nthreads, genomedir):
