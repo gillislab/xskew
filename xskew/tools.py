@@ -59,61 +59,6 @@ def modulo_filter(inlist, divisor, remainder):
     return newlist
 
 
-#def run_command(cmd):
-#    """
-#    cmd should be standard list of tokens...  ['cmd','arg1','arg2'] with cmd on shell PATH.
-#    
-#    """
-#    cmdstr = " ".join(cmd)
-#    logging.info(f"running command: {cmdstr} ")
-#    start = dt.datetime.now()
-#    cp = subprocess.run(cmd, 
-#                    text=True, 
-#                    stdout=subprocess.PIPE, 
-#                    stderr=subprocess.STDOUT)
-#    end = dt.datetime.now()
-#    elapsed =  end - start
-#    logging.debug(f"ran cmd='{cmdstr}' return={cp.returncode} {elapsed.seconds} seconds.")
-    
-#    if cp.stderr is not None:
-#        logging.debug(f"got stderr: {cp.stderr}")
-#    if cp.stdout is not None:
-#        logging.debug(f"got stdout: {cp.stdout}")
-#    if str(cp.returncode) == '0':
-#        logging.info(f'got rc={cp.returncode} command= {cmdstr}')
-#    else:
-#        logging.warn(f'got rc={cp.returncode} command= {cmdstr}')
-#    return cp
-
-#def run_command_shell(cmd):
-#    """
-#    maybe subprocess.run(" ".join(cmd), shell=True)
-#    cmd should be standard list of tokens...  ['cmd','arg1','arg2'] with cmd on shell PATH.
-#    
-#    """
-#    cmdstr = " ".join(cmd)
-#    logging.info(f"running command: {cmdstr} ")
-#    start = dt.datetime.now()
-#    cp = subprocess.run(" ".join(cmd), 
-#                    shell=True, 
-#                    stdout=subprocess.PIPE, 
-#                    stderr=subprocess.STDOUT)
-#    end = dt.datetime.now()
-#    elapsed =  end - start
-#    logging.debug(f"ran cmd='{cmdstr}' return={cp.returncode} {elapsed.seconds} seconds.")
-#    
-#    if cp.stderr is not None:
-#        logging.debug(f"got stderr: {cp.stderr}")
-#    if cp.stdout is not None:
-#        logging.debug(f"got stdout: {cp.stdout}")
-#    
-#    if str(cp.returncode) == '0':
-#        logging.info(f'successfully ran {cmdstr}')
-#        return cp
-#    else:
-#        logging.error(f'non-zero return code for cmd {cmdstr}')
-#        raise NonZeroReturnException(f'For cmd {cmdstr}')
-
 def list_sample(infile):
     """
     log a directory listing of all files starting with <sample>. for infile. 
@@ -234,6 +179,21 @@ def make_chr_index(infile, genomedir, chr, outfile):
     samtools_faidx_region(infile, outfile, region)  
 
 
+def bedtools_bamtofastq(infile, end1, end2):
+    cmd = ['bedtools',
+           'bamtofastq',
+           '-i', infile, 
+           '-fq', end1,
+           '-fq2', end2 
+       ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {infile}')
+        logging.error(traceback.format_exc(None))
+        raise       
+
+
 def star_nowasp(end1, outprefix, nthreads, genomedir, end2=None):
     
     if end2 is None:
@@ -345,6 +305,25 @@ def samtools_dict(infile, outfile):
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))    
         raise    
+
+def samtools_sort_readname(infile, outfile, memory, nthreads):
+    cmd = ['samtools',
+           'sort',
+           '-n',
+           '-m', f'{memory}M',
+           '-o', outfile, 
+           '-O', 'bam', 
+           '-@', f'{nthreads}',
+           infile
+       ]
+    try:
+        run_command(cmd)
+    except NonZeroReturnException as nzre:
+        logging.error(f'problem with {infile}')
+        logging.error(traceback.format_exc(None))
+        raise 
+
+
 
 def samtools_sort(infile, outfile, memory, nthreads):
     cmd = ['samtools',
