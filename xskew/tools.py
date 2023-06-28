@@ -324,7 +324,6 @@ def samtools_sort_readname(infile, outfile, memory, nthreads):
         raise 
 
 
-
 def samtools_sort(infile, outfile, memory, nthreads):
     cmd = ['samtools',
            'sort',
