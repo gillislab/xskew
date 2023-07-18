@@ -307,6 +307,8 @@ def samtools_dict(infile, outfile):
         raise    
 
 def samtools_sort_readname(infile, outfile, memory, nthreads):
+    
+    nthreads = str(nthreads)
     cmd = ['samtools',
            'sort',
            '-n',
