@@ -309,7 +309,9 @@ def samtools_dict(infile, outfile):
 def samtools_sort_readname(infile, outfile, memory, nthreads):
     
     nthreads = str(nthreads)
-    cmd = ['samtools',
+    mstring = f'{memory}M'
+
+    oldcmd = ['samtools',
            'sort',
            '-n',
            '-m', f'{memory}M',
@@ -318,8 +320,18 @@ def samtools_sort_readname(infile, outfile, memory, nthreads):
            '-@', f'{nthreads}',
            infile
        ]
+    
+    cmd = ['samtools',
+           'sort',
+           '-n',
+           '-m', mstring,
+           '-o', outfile, 
+           '-O', 'bam', 
+           '-@', nthreads,
+           infile
+       ]
     try:
-        run_command(cmd)
+        run_command_shell(cmd)
     except NonZeroReturnException as nzre:
         logging.error(f'problem with {infile}')
         logging.error(traceback.format_exc(None))
