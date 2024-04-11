@@ -12,6 +12,8 @@ from Bio import SeqIO
 from Bio.Seq import Seq 
 
 from xskew.tools import *
+from cshlwork.genome import *
+
 
 
 '''
@@ -45,104 +47,6 @@ https://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/Macaca_mulatta/
 GRC genome reference consortium (human and mouse genomes)
 
 '''
-
-
-def prepare_genome_ensembl(genomefile, annotfile, outdir):
-    '''
-    for ensemble, no assembly report is needed. 
-    make <chrnum>label.txt files for each chromosome, with <chrnum> as value inside. 
-    make <chrnum>.fa and <chrnum>.fa.fai for each chromosome using index_region
-        
-     
-    '''
-    logging.debug(f'creating symlinks')
-    if os.path.exists(f'{outdir}/genome.fa'):
-        os.remove(f'{outdir}/genome.fa')
-    os.symlink(genomefile, f'{outdir}/genome.fa')
-    if os.path.exists(f'{outdir}/annotation.gtf'):
-        os.remove(f'{outdir}/annotation.gtf')
-    os.symlink(annotfile, f'{outdir}/annotation.gtf')
-
-    sfh = open(genomefile)
-    seq_dict = SeqIO.to_dict(SeqIO.parse(sfh, "fasta"))
-    sfh.close()
-    logging.debug(f'read genome file {genomefile} w/ {len(seq_dict)} records. keys={seq_dict.keys()}')
-    chrlabels = list(seq_dict.keys())
-    for chrlabel in chrlabels:
-        fn = f'{outdir}/{chrlabel}label.txt'
-        logging.debug(f'writing {fn}...')
-        with open(fn, 'w') as f:
-            f.write(f'{chrlabel}\n')
-    
-        make_chr_index( infile=genomefile,
-                        genomedir = outdir, 
-                        chr = chrlabel, 
-                        outfile = f'{outdir}/{chrlabel}.fa')
-        logging.debug(f'handled chromsome {chrlabel}')
-    
-    star_genome(outdir, "6" ,f'{outdir}/annotation.gtf',  f'{outdir}/genome.fa')
-    samtools_dict(f'{outdir}/genome.fa',f'{outdir}/genome.dict')
-    
-    logging.info(f'done.')
-            
-
-def parse_assembly_report(reportfile):
-    '''
-    return list of tuples  ( chrnum,   contigid )
-    
-    '''
-    colnames = ['Sequence-Name','Sequence-Role','Assigned-Molecule',
-                'Assigned-Molecule-Location/Type','GenBank-Accn',
-                'Relationship','RefSeq-Accn','Assembly-Unit',
-                'Sequence-Length','UCSC-style-name']   
-    df = pd.read_csv(reportfile, comment="#", sep='\t', header=None)
-    df.columns = colnames
-    amdf = df[df['Sequence-Role'] == 'assembled-molecule']
-    amdf = amdf[amdf['Assembly-Unit'] == 'Primary Assembly' ]
-    mdf = amdf[['Assigned-Molecule','RefSeq-Accn']]
-    tlist = list(mdf.itertuples(index=False, name=None))
-    logging.debug(f'extracted {len(tlist)} maps in {reportfile}')
-    return tlist
-
-def prepare_genome_refseq(genomefile, annotfile, reportfile, outdir):
-    logging.debug(f'creating symlinks')
-    if os.path.exists(f'{outdir}/genome.fa'):
-        os.remove(f'{outdir}/genome.fa')
-    os.symlink(genomefile, f'{outdir}/genome.fa')
-    
-    if os.path.exists(f'{outdir}/annotation.gtf'):
-        os.remove(f'{outdir}/annotation.gtf')
-    os.symlink(annotfile, f'{outdir}/annotation.gtf')
-    
-    tlist = parse_assembly_report(reportfile)
-    logging.debug(tlist)
-    for (chrlabel, contig) in tlist:
-        fn = f'{outdir}/{chrlabel}label.txt'
-        logging.debug(f'writing {fn}...')
-        with open(fn, 'w') as f:
-            f.write(f'{contig}\n')
-
-        make_chr_index( infile=genomefile,
-                        genomedir = outdir, 
-                        chr = chrlabel, 
-                        outfile = f'{outdir}/{chrlabel}.fa')
-        logging.debug(f'handled chromosome {chrlabel}')
-        
-    star_genome(outdir,"6" ,f'{outdir}/annotation.gtf',  f'{outdir}/genome.fa')
-    samtools_dict(f'{outdir}/genome.fa',f'{outdir}/genome.dict')
-    samtools_faidx(f'{outdir}/genome.fa',f'{outdir}/genome.fa.fai')
-    logging.info(f'done.')
-
-
-def prepare_genome_genbank():
-    pass
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     FORMAT = '%(asctime)s (UTC) [ %(levelname)s ] %(filename)s:%(lineno)d %(name)s.%(funcName)s(): %(message)s'
