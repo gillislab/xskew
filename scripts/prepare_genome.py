@@ -12,7 +12,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq 
 
 from xskew.tools import *
-from cshlwork.genome import *
+from genome.genome import *
 
 
 
