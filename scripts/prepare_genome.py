@@ -109,6 +109,7 @@ def prepare_genome_refseq(genomefile, annotfile, reportfile, outdir):
     if os.path.exists(f'{outdir}/genome.fa'):
         os.remove(f'{outdir}/genome.fa')
     os.symlink(genomefile, f'{outdir}/genome.fa')
+    
     if os.path.exists(f'{outdir}/annotation.gtf'):
         os.remove(f'{outdir}/annotation.gtf')
     os.symlink(annotfile, f'{outdir}/annotation.gtf')

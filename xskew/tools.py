@@ -116,7 +116,6 @@ def parse_assembly_report(reportfile):
     '''
 
 
-
 def star_genome(genomedir, nthreads, gtffile, infile ): 
     cmd = ['STAR',
            '--runMode', 'genomeGenerate',
