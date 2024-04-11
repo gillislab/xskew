@@ -13,7 +13,7 @@ from Bio.Seq import Seq
 
 from xskew.tools import *
 from genome.genome import *
-
+from cshlwork.utils import *
 
 
 '''

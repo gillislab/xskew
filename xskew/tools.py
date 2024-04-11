@@ -159,6 +159,11 @@ def make_chr_label(reportfile, outfile, chr='chrX' ):
     f.close()
 
 
+def make_chr_index(infile, genomedir, chr, outfile):
+    region = get_chr_label(genomedir, chr)
+    samtools_faidx_region(infile, outfile, region)  
+
+
 def get_chr_label(genomedir, chr='chrX'):
     labelfile = f"{genomedir}/{chr}label.txt"
     f = open(labelfile, 'r')
@@ -171,11 +176,6 @@ def get_label(regionfile):
     label = f.read().strip()
     logging.debug(f"retrieved label {label} for {chr} in {regionfile}")
     return label
-
-
-def make_chr_index(infile, genomedir, chr, outfile):
-    region = get_chr_label(genomedir, chr)
-    samtools_faidx_region(infile, outfile, region)  
 
 
 def bedtools_bamtofastq(infile, end1, end2):
