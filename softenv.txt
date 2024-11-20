@@ -57,11 +57,14 @@ sleep 2
 conda activate xskew
 
 conda install -y -c conda-forge -c bioconda biopython python=3.9.7 snakemake=6.8.0 star gatk4 samtools bamtools bedtools igvtools openjdk
+conda install -y -c conda-forge -c bioconda biopython python snakemake star gatk4 samtools bamtools bedtools igvtools openjdk scipy
+
 
 # Move jdk-11 to igvtoolsdir so launch script notices it as local JDK
 #  vs. JDK8 which is used for gatk4 
 cd ~/src 
 wget https://data.broadinstitute.org/igv/projects/downloads/2.5/IGV_Linux_2.5.3.zip
+wget https://data.broadinstitute.org/igv/projects/downloads/2.18/IGV_2.18.4.zip
 unzip IGV_Linux_2.5.3.zip 
 mv IGV_Linux_2.5.3/jdk-11 $CONDA_PREFIX/share/igvtools-2.5.3-1/ 
 
@@ -70,6 +73,8 @@ mv IGV_Linux_2.5.3/jdk-11 $CONDA_PREFIX/share/igvtools-2.5.3-1/
 # linux/centos
 cd  $CONDA_PREFIX
 wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.0/sratoolkit.2.11.0-centos_linux64.tar.gz
+wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/3.1.1/sratoolkit.3.1.1-centos_linux64.tar.gz
+
 tar -xvzf sratoolkit.2.11.0-centos_linux64.tar.gz
 cd bin
 ln -s ../sratoolkit.2.11.0-centos_linux64/bin/* ./

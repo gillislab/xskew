@@ -15,7 +15,6 @@ from xskew.tools import *
 from genome.genome import *
 from cshlwork.utils import *
 
-
 '''
 ENSEMBL
 https://useast.ensembl.org/index.html
@@ -38,7 +37,6 @@ https://ftp.ncbi.nlm.nih.gov/genomes/genbank/vertebrate_mammalian/Macaca_mulatta
 
 Annotation:
 https://ftp.ncbi.nlm.nih.gov/genomes/all/annotation_releases/9544/103/GCF_003339765.1_Mmul_10/
-
 
 Refseq (GCF)
 https://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/Macaca_mulatta/
