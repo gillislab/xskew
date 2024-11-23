@@ -81,26 +81,52 @@ def list_sample(infile):
 
 
         
-def fasterq_dump(infile, outdir, nthreads, tempdir ):
+def fasterq_dump(infile, outdir, nthreads, tempdir, outfile=None ):
+    '''
+    for single-ended reads, output is sometimes <sample>.fastq and 
+    sometimes <sample>_1.fastq
+    so we need to fix filename after run. 
+    
+    '''
+    
+    filepath = os.path.abspath(infile)    
+    dirname = os.path.dirname(filepath)
+    filename = os.path.basename(filepath)
+    (sample, ext) = os.path.splitext(filename)
+    logging.debug(f'handling sample={sample} dirname={dirname}')
     
     cmd = ['fasterq-dump', 
     '--split-files',
     '--include-technical',
     '--force', 
     '--threads', nthreads,
-    '--outdir', outdir,
+    '--outdir', outdir, 
     '-t', tempdir,
     '--log-level', 'debug', 
     infile]
     try:
         cp = run_command(cmd)
         logging.info(f'got rc={cp.returncode}')
-        
+        if outfile is not None:
+            logging.info(f'outfile={outfile}')
+            # implies single-ended output
+            logging.info(f'checking for {outdir}/{sample}.fastq')
+            if os.path.exists(f'{outdir}/{sample}.fastq'):
+                os.rename(f'{outdir}/{sample}.fastq', outfile)
+                logging.info(f'renamed output {outdir}/{sample}.fastq -> {outfile} ')
+            logging.info(f'checking for {outdir}/{sample}_1.fastq')
+            if os.path.exists(f'{outdir}/{sample}_1.fastq'):
+                os.rename(f'{outdir}/{sample}_1.fastq',outfile)            
+                logging.info(f'renamed output {outdir}/{sample}_1.fastq -> {outfile} ')        
+
     #except NonZeroReturnException as nzre:
     #    logging.error(f'problem with {infile}')
     #    logging.error(traceback.format_exc(None))
     except Exception as e:
-        logging.error(traceback.format_exc(None))    
+        logging.error(traceback.format_exc(None))
+        
+        
+        
     
 #def star_nowasp(end1, end2, outprefix, outtemp, nthreads, genomedir):
 
